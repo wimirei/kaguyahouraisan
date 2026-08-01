@@ -1,8 +1,8 @@
 # kaguyahouraisan
 
-# Чтобы попасть на страницу админки, перейдите по адресу AdminkaMorkovka/Index
+ Р§С‚РѕР±С‹ РїРѕРїР°СЃС‚СЊ РЅР° СЃС‚СЂР°РЅРёС†Сѓ Р°РґРјРёРЅРєРё, РїРµСЂРµР№РґРёС‚Рµ РїРѕ Р°РґСЂРµСЃСѓ AdminkaMorkovka/Index
 
-# Пароль: admindevelopment
+ РџР°СЂРѕР»СЊ: admindevelopment
 
-# Copyright (c) 2026 wimirei
-# https://kaguyahouraisan.com
+ Copyright (c) 2026 wimirei
+ https://kaguyahouraisan.com
