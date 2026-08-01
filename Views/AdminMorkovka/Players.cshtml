@@ -1,0 +1,108 @@
+﻿@model List<thrucommunity.Models.PlayerModel>
+
+@{
+    ViewData["Title"] = "Игроки";
+}
+
+<div class="container mt-4">
+
+    <div class="card shadow-sm">
+
+        <div class="card-header fw-bold">
+            Управление игроками
+        </div>
+
+        <div class="card-body p-0">
+
+            <div class="table-responsive">
+
+                <table class="table table-hover align-middle mb-0">
+
+                    <thead>
+
+                        <tr>
+
+                            <th>Ник</th>
+                            <th>SP</th>
+                            <th>L1CC</th>
+                            <th>LNB</th>
+                            <th>LNB+</th>
+                            <th>LNM</th>
+                            <th>LNN</th>
+                            <th>LNNN</th>
+                            <th>ExNN</th>
+                            <th>🥇</th>
+                            <th>🥈</th>
+                            <th>🥉</th>
+                            <th>WR</th>
+                            <th></th>
+
+                        </tr>
+
+                    </thead>
+
+                    <tbody>
+
+                        @foreach (var player in Model)
+                        {
+                            <tr>
+
+                                <td class="fw-semibold">
+                                    @player.Nickname
+                                </td>
+
+                                <td>@player.survivalpoints</td>
+
+                                <td>@player.L1CCcount</td>
+                                <td>@player.LNBcount</td>
+                                <td>@player.LNBNxcount</td>
+                                <td>@player.LNMcount</td>
+                                <td>@player.LNNcount</td>
+                                <td>@player.LNNNcount</td>
+                                <td>@player.ExNNcount</td>
+
+                                <td>@player.FirstPlaceCount</td>
+                                <td>@player.SecondPlaceCount</td>
+                                <td>@player.ThirdPlaceCount</td>
+
+                                <td>@player.WRcount</td>
+
+                                <td class="text-end">
+
+                                    <a asp-action="EditPlayer"
+                                       asp-route-id="@player.Id"
+                                       class="btn btn-sm btn-outline-primary">
+                                        Изменить
+                                    </a>
+
+                                    <form asp-action="DeletePlayer"
+                                          asp-route-id="@player.Id"
+                                          method="post"
+                                          class="d-inline"
+                                          onsubmit="return confirm('Удалить игрока?');">
+
+                                        @Html.AntiForgeryToken()
+
+                                        <button type="submit"
+                                                class="btn btn-sm btn-outline-danger">
+                                            Удалить
+                                        </button>
+
+                                    </form>
+
+                                </td>
+
+                            </tr>
+                        }
+
+                    </tbody>
+
+                </table>
+
+            </div>
+
+        </div>
+
+    </div>
+
+</div>

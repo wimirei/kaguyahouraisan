@@ -60,7 +60,7 @@ namespace thrucommunity.Controllers
                     password);
 
 
-            if (result == PasswordVerificationResult.Success)
+            if (result == PasswordVerificationResult.Success || result == PasswordVerificationResult.SuccessRehashNeeded)
             {
                 var claims = new List<Claim> { new Claim(ClaimTypes.Role,"Admin")};
 
@@ -526,6 +526,84 @@ namespace thrucommunity.Controllers
 
             //Easy, Mormal, Hard, Lunatic
             return type.Substring(1);
+        }
+
+        [HttpGet("AdminMorkovka/Players")]
+        public async Task<IActionResult> Players()
+        {
+            var players = await _context.Players
+                .OrderBy(p => p.Nickname)
+                .ToListAsync();
+
+            return View(players);
+        }
+
+        [HttpGet("AdminMorkovka/EditPlayer/{id}")]
+        public async Task<IActionResult> EditPlayer(int id)
+        {
+            var player = await _context.Players
+                .FirstOrDefaultAsync(p => p.Id == id);
+
+            if (player == null)
+                return NotFound();
+
+            return View(player);
+        }
+
+        [HttpPost("AdminMorkovka/EditPlayer/{id}")]
+        [ValidateAntiForgeryToken]
+        public async Task<IActionResult> EditPlayer(int id, PlayerModel model)
+        {
+            if (id != model.Id)
+                return NotFound();
+
+            if (!ModelState.IsValid)
+                return View(model);
+
+            var player = await _context.Players
+                .FirstOrDefaultAsync(p => p.Id == id);
+
+            if (player == null)
+                return NotFound();
+
+            //Никнейм запрещено изменять
+
+            player.survivalpoints = model.survivalpoints;
+
+            player.L1CCcount = model.L1CCcount;
+            player.LNBcount = model.LNBcount;
+            player.LNBNxcount = model.LNBNxcount;
+            player.LNMcount = model.LNMcount;
+            player.LNNcount = model.LNNcount;
+            player.LNNNcount = model.LNNNcount;
+            player.ExNNcount = model.ExNNcount;
+
+            player.FirstPlaceCount = model.FirstPlaceCount;
+            player.SecondPlaceCount = model.SecondPlaceCount;
+            player.ThirdPlaceCount = model.ThirdPlaceCount;
+
+            player.WRcount = model.WRcount;
+
+            await _context.SaveChangesAsync();
+
+            return RedirectToAction(nameof(Players));
+        }
+
+        [HttpPost("AdminMorkovka/DeletePlayer/{id}")]
+        [ValidateAntiForgeryToken]
+        public async Task<IActionResult> DeletePlayer(int id)
+        {
+            var player = await _context.Players
+                .FirstOrDefaultAsync(p => p.Id == id);
+
+            if (player == null)
+                return NotFound();
+
+            _context.Players.Remove(player);
+
+            await _context.SaveChangesAsync();
+
+            return RedirectToAction(nameof(Players));
         }
     }
 }

@@ -7,8 +7,8 @@ namespace thrucommunity.Services
     {
         public static string BuildTypeOfSurvival(ReplayModel replay)
         {
-            if (replay.Category != RunCategory.Survival)
-                return "Scoring";
+            //if (replay.Category != RunCategory.Survival)
+               // return "Scoring";
 
             string prefix = replay.Difficulty switch
             {

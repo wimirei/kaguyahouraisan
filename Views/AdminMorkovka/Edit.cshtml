@@ -1,118 +1,268 @@
 ﻿@model thrucommunity.Models.ReplayModel
+@using thrucommunity.Models
+@using Microsoft.AspNetCore.Mvc.Rendering
 
 @{
-    ViewData["Title"] = "Edit Replay";
+    ViewData["Title"] = "Редактирование реплея";
 }
 
-<div class="container mt-4">
+<div class="container mt-4" style="max-width:900px;">
 
     <div class="card shadow-sm">
 
         <div class="card-header fw-bold">
-            Edit Replay #@Model.Id
+            Редактирование реплея
         </div>
 
         <div class="card-body">
 
-            <form method="post">
+            <form asp-action="Edit"
+                  asp-route-id="@Model.Id"
+                  method="post">
 
-                <input type="hidden" asp-for="Id" />
+                @Html.AntiForgeryToken()
+
+                <input asp-for="Id" type="hidden" />
 
                 <div class="row">
 
                     <div class="col-md-6 mb-3">
-                        <label class="form-label">Nickname</label>
-                        <input asp-for="Nickname" class="form-control" />
+
+                        <label asp-for="Nickname" class="form-label"></label>
+
+                        <input asp-for="Nickname"
+                               class="form-control" />
+
                     </div>
 
                     <div class="col-md-6 mb-3">
-                        <label class="form-label">Game</label>
+
+                        <label class="form-label">
+                            Дата реплея
+                        </label>
+
+                        <input asp-for="ReplayDate"
+                               type="date"
+                               class="form-control" />
+
+                    </div>
+
+                </div>
+
+                <div class="row">
+
+                    <div class="col-md-4 mb-3">
+
+                        <label class="form-label">Игра</label>
+
                         <select asp-for="Game"
                                 class="form-select"
                                 asp-items="Html.GetEnumSelectList<TouhouGame>()">
                         </select>
+
                     </div>
 
-                    <div class="col-md-6 mb-3">
-                        <label class="form-label">ShotType</label>
-                        <input asp-for="ShotType" class="form-control" />
-                    </div>
+                    <div class="col-md-4 mb-3">
 
-                    <div class="col-md-6 mb-3">
-                        <label class="form-label">Difficulty</label>
+                        <label class="form-label">Сложность</label>
+
                         <select asp-for="Difficulty"
                                 class="form-select"
                                 asp-items="Html.GetEnumSelectList<Difficulty>()">
                         </select>
+
                     </div>
 
-                    <div class="col-md-6 mb-3">
-                        <label class="form-label">Category</label>
+                    <div class="col-md-4 mb-3">
+
+                        <label class="form-label">Категория</label>
+
                         <select asp-for="Category"
                                 class="form-select"
                                 asp-items="Html.GetEnumSelectList<RunCategory>()">
                         </select>
+
                     </div>
 
-                    <div class="col-md-6 mb-3">
-                        <label class="form-label">Score</label>
-                        <input asp-for="Score" class="form-control" />
-                    </div>
+                </div>
+
+                <div class="mb-3">
+
+                    <label class="form-label">
+                        Шоттип
+                    </label>
+
+                    <input asp-for="ShotType"
+                           class="form-control" />
+
+                </div>
+
+                <hr />
+
+                <div class="row">
 
                     <div class="col-md-6 mb-3">
-                        <label class="form-label">Death Count</label>
-                        <input asp-for="DeathCount" class="form-control" />
-                    </div>
 
-                    <div class="col-md-6 mb-3">
-                        <label class="form-label">Replay Link</label>
-                        <input asp-for="ReplayLink" class="form-control" />
-                    </div>
+                        <label class="form-label">
+                            Score
+                        </label>
 
-                    <div class="col-md-6 mb-3">
-                        <label class="form-label">Replay Date</label>
-                        <input asp-for="ReplayDate"
-                               type="date"
+                        <input asp-for="Score"
+                               type="number"
                                class="form-control" />
+
                     </div>
 
-                    <div class="col-12 mb-3">
+                    <div class="col-md-6 mb-3">
+
+                        <label class="form-label">
+                            Death Count
+                        </label>
+
+                        <input asp-for="DeathCount"
+                               type="number"
+                               class="form-control" />
+
+                    </div>
+
+                </div>
+
+                <div class="row">
+
+                    <div class="col-md-4">
 
                         <div class="form-check">
-                            <input asp-for="NoMiss" class="form-check-input" />
-                            <label class="form-check-label">No Miss</label>
+
+                            <input asp-for="NoMiss"
+                                   class="form-check-input" />
+
+                            <label asp-for="NoMiss"
+                                   class="form-check-label">
+                            </label>
+
                         </div>
 
-                        <div class="form-check">
-                            <input asp-for="NoBomb" class="form-check-input" />
-                            <label class="form-check-label">No Bomb</label>
-                        </div>
+                    </div>
+
+                    <div class="col-md-4">
 
                         <div class="form-check">
-                            <input asp-for="NoThirdCondition" class="form-check-input" />
-                            <label class="form-check-label">No Third Condition</label>
+
+                            <input asp-for="NoBomb"
+                                   class="form-check-input" />
+
+                            <label asp-for="NoBomb"
+                                   class="form-check-label">
+                            </label>
+
+                        </div>
+
+                    </div>
+
+                    <div class="col-md-4">
+
+                        <div class="form-check">
+
+                            <input asp-for="NoThirdCondition"
+                                   class="form-check-input" />
+
+                            <label asp-for="NoThirdCondition"
+                                   class="form-check-label">
+                            </label>
+
                         </div>
 
                     </div>
 
                 </div>
 
-                <div class="d-flex gap-2">
+                <hr />
 
-                    <button type="submit" class="btn btn-primary">
-                        Save
-                    </button>
+                <div class="mb-3">
+
+                    <label class="form-label">
+                        Комментарий
+                    </label>
+
+                    <textarea asp-for="Comment"
+                              rows="4"
+                              class="form-control"></textarea>
+
+                </div>
+
+                <div class="mb-3">
+
+                    <label class="form-label">
+                        Ссылка
+                    </label>
+
+                    <input asp-for="ReplayLink"
+                           class="form-control" />
+
+                </div>
+
+                <hr />
+
+                <div class="card bg-body-tertiary mb-3">
+
+                    <div class="card-header">
+                        Служебная информация
+                    </div>
+
+                    <div class="card-body">
+
+                        <div class="mb-2">
+
+                            <label class="form-label">
+                                Имя файла
+                            </label>
+                        
+
+                        <div class="mb-2">
+
+                            <label class="form-label">
+                                Дата загрузки
+                            </label>
+
+                            <input class="form-control"
+                                   value="@Model.SubmittedAtUtc"
+                                   readonly />
+
+                        </div>
+
+                        <div class="mb-2">
+
+                            <label class="form-label">
+                                Тип результата
+                            </label>
+
+                            <input class="form-control"
+                                   value="@Model.TypeOfSurvival"/>
+
+                        </div>
+
+                    </div>
+                    </div>
+                </div>
+
+                <div class="d-flex justify-content-between">
 
                     <a asp-action="Replays"
-                       class="btn btn-secondary">
-                        Cancel
+                       class="btn btn-outline-secondary">
+                        Назад
                     </a>
+
+                    <button type="submit"
+                            class="btn btn-primary">
+                        Сохранить
+                    </button>
 
                 </div>
 
             </form>
 
         </div>
+
     </div>
 
 </div>

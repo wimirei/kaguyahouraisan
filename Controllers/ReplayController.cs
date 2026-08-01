@@ -207,7 +207,7 @@ namespace thrucommunity.Controllers
 
             if (model.ReplayDate == default)
             {
-                model.ReplayDate = model.SubmittedAtUtc;
+                model.ReplayDate = DateTime.UtcNow;
             }
 
             if (model.ReplayDate != default)

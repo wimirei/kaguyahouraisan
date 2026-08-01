@@ -1,0 +1,143 @@
+﻿@model thrucommunity.Models.PlayerModel
+
+@{
+    ViewData["Title"] = "Редактирование игрока";
+}
+
+<div class="container mt-4" style="max-width:700px;">
+
+    <div class="card shadow-sm">
+
+        <div class="card-header fw-bold">
+            Редактирование игрока
+        </div>
+
+        <div class="card-body">
+
+            <form asp-action="EditPlayer"
+                  asp-route-id="@Model.Id"
+                  method="post">
+
+                @Html.AntiForgeryToken()
+
+                <input asp-for="Id" type="hidden" />
+
+                <div class="mb-3">
+
+                    <label asp-for="Nickname" class="form-label"></label>
+
+                    <input asp-for="Nickname"
+                           class="form-control"
+                           readonly />
+
+                    <div class="form-text">
+                        Никнейм нельзя изменить.
+                    </div>
+
+                </div>
+
+                <div class="mb-3">
+
+                    <label class="form-label">
+                        Survival Points
+                    </label>
+
+                    <input asp-for="survivalpoints"
+                           class="form-control" />
+
+                </div>
+
+                <hr />
+
+                <div class="row">
+
+                    <div class="col-md-6 mb-3">
+                        <label>L1CC</label>
+                        <input asp-for="L1CCcount" class="form-control" />
+                    </div>
+
+                    <div class="col-md-6 mb-3">
+                        <label>LNB</label>
+                        <input asp-for="LNBcount" class="form-control" />
+                    </div>
+
+                    <div class="col-md-6 mb-3">
+                        <label>LNB+</label>
+                        <input asp-for="LNBNxcount" class="form-control" />
+                    </div>
+
+                    <div class="col-md-6 mb-3">
+                        <label>LNM</label>
+                        <input asp-for="LNMcount" class="form-control" />
+                    </div>
+
+                    <div class="col-md-6 mb-3">
+                        <label>LNN</label>
+                        <input asp-for="LNNcount" class="form-control" />
+                    </div>
+
+                    <div class="col-md-6 mb-3">
+                        <label>LNNN</label>
+                        <input asp-for="LNNNcount" class="form-control" />
+                    </div>
+
+                    <div class="col-md-6 mb-3">
+                        <label>ExNN</label>
+                        <input asp-for="ExNNcount" class="form-control" />
+                    </div>
+
+                </div>
+
+                <hr />
+
+                <div class="row">
+
+                    <div class="col-md-3 mb-3">
+                        <label>🥇</label>
+                        <input asp-for="FirstPlaceCount"
+                               class="form-control" />
+                    </div>
+
+                    <div class="col-md-3 mb-3">
+                        <label>🥈</label>
+                        <input asp-for="SecondPlaceCount"
+                               class="form-control" />
+                    </div>
+
+                    <div class="col-md-3 mb-3">
+                        <label>🥉</label>
+                        <input asp-for="ThirdPlaceCount"
+                               class="form-control" />
+                    </div>
+
+                    <div class="col-md-3 mb-3">
+                        <label>WR</label>
+                        <input asp-for="WRcount"
+                               class="form-control" />
+                    </div>
+
+                </div>
+
+                <hr />
+
+                <div class="d-flex justify-content-between">
+
+                    <a asp-action="Players"
+                       class="btn btn-outline-secondary">
+                        Назад
+                    </a>
+
+                    <button type="submit"
+                            class="btn btn-primary">
+                        Сохранить
+                    </button>
+
+                </div>
+
+            </form>
+
+        </div>
+
+    </div>
+
+</div>

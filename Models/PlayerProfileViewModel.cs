@@ -11,6 +11,12 @@ namespace thrucommunity.Models
 
         public List<ReplayModel> AllReplays { get; set; } = new();
 
-        public Dictionary<TouhouGame, Dictionary<Difficulty, BestResultsViewModel>> BestResults { get; set; } = new();
+        public Dictionary<TouhouGame, Dictionary<Difficulty, BestResultsViewModel>> BestSurvivalResults { get; set; } = new();
+
+        public Dictionary<TouhouGame, Dictionary<Difficulty, BestResultsViewModel>> BestScoringResults { get; set; } = new();
+
+        public Dictionary<TouhouGame, Dictionary<Difficulty, Dictionary<string, BestResultsViewModel>>> SurvivalTables { get; set; } = new();
+
+        public Dictionary<TouhouGame, Dictionary<Difficulty, Dictionary<string, BestResultsViewModel>>> ScoringTables { get; set; } = new();
     }
 }

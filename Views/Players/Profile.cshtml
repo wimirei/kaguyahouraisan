@@ -1,6 +1,7 @@
 ﻿@model thrucommunity.Models.PlayerProfileViewModel
 @using thrucommunity.Models
 @using thrucommunity.Services
+@using thrucommunity.Data
 
 @{
     ViewData["Title"] = Model.Player.Nickname;
@@ -76,15 +77,35 @@
 
     <div class="card shadow-sm mb-2 best-results-card">
 
-        <div class="card-header fw-bold py-2 px-3">
-            Лучшие результаты
+        <div class="card-header d-flex justify-content-between align-items-center">
+
+            <span class="fw-bold">
+                Лучшие результаты
+            </span>
+
+            <div class="btn-group btn-group-sm">
+
+                <button id="btnSurvival"
+                        class="btn btn-primary">
+                    Cурвайвол
+                </button>
+
+                <button id="btnScoring"
+                        class="btn btn-outline-primary">
+                    Скоринг
+                </button>
+
+            </div>
+
         </div>
 
         <div class="card-body p-0">
 
-            <div class="table-responsive">
+            <div id="survivalTable">
 
-                <table class="table table-hover table-sm align-middle mb-0 best-results-table">
+                 <div class="table-responsive">
+
+                 <table class="table table-hover table-sm align-middle mb-0 best-results-table">
 
                     <thead>
                         <tr>
@@ -92,7 +113,11 @@
 
                             @foreach (Difficulty difficulty in Enum.GetValues(typeof(Difficulty)))
                             {
-                                <th class="text-center">@difficulty</th>
+                                    <th>
+                                        <span class="badge @difficulty.BadgeDiffClass()">
+                                            @difficulty
+                                        </span>
+                                    </th>
                             }
 
                         </tr>
@@ -112,7 +137,7 @@
 
                                 @foreach (Difficulty difficulty in Enum.GetValues(typeof(Difficulty)))
                                 {
-                                    var cell = Model.BestResults[game][difficulty];
+                                    var cell = Model.BestSurvivalResults[game][difficulty];
 
                                     <td class="text-center">
 
@@ -140,15 +165,305 @@
                             </tr>
                         }
 
-                    </tbody>
+                        </tbody>
 
-                </table>
+                    </table>
+
+                </div>  
+            </div>
+
+            <div id="scoringTable" style="display:none;">
+
+                <div class="table-responsive">
+
+                    <table class="table table-hover mb-0 best-results-table">
+
+                        <thead>
+
+                            <tr>
+
+                                <th>Игра</th>
+
+                                @foreach (Difficulty difficulty in Enum.GetValues(typeof(Difficulty)))
+                                {
+                                    <th>
+                                        <span class="badge @difficulty.BadgeDiffClass()">
+                                            @difficulty
+                                        </span>
+                                    </th>
+                                }
+
+                            </tr>
+
+                        </thead>
+
+                        <tbody>
+
+                            @foreach (TouhouGame game in Enum.GetValues(typeof(TouhouGame)))
+                            {
+                                <tr>
+
+                                    <td>
+                                        <span class="badge @game.BadgeGameClass()">
+                                            @game
+                                        </span>
+                                    </td>
+
+                                    @foreach (Difficulty difficulty in Enum.GetValues(typeof(Difficulty)))
+                                    {
+                                        var cell = Model.BestScoringResults[game][difficulty];
+
+                                        <td>
+
+                                            @if (cell.Replay != null)
+                                            {
+                                                <a asp-controller="Replay"
+                                                   asp-action="Replay"
+                                                   asp-route-id="@cell.Replay.Id"
+                                                   class="text-decoration-none">
+
+                                                    @String.Format("{0:N0}", cell.Replay.Score)
+
+                                                </a>
+                                            }
+                                            else
+                                            {
+                                                <span class="text-secondary">—</span>
+                                            }
+
+                                        </td>
+                                    }
+
+                                </tr>
+                            }
+
+                        </tbody>
+
+                    </table>
+
+                </div>
+
+            </div>
+            </div>
+
+    </div>
+
+    <div class="card shadow-sm mb-4">
+
+        <div class="card-header">
+
+            <div class="d-flex flex-wrap gap-1 mb-2" id="gameSelector">
+
+                @foreach (TouhouGame game in Enum.GetValues(typeof(TouhouGame)))
+                {
+                    <button type="button"
+                            class="btn btn-sm @(game == TouhouGame.EoSD ? "btn-primary" : "btn-outline-primary") game-btn"
+                            data-game="@game">
+                        @game
+                    </button>
+                }
+
+            </div>
+
+            <div class="btn-group btn-group-sm">
+
+                <button id="btnShotSurvival"
+                        class="btn btn-primary">
+                    Сурвайвол
+                </button>
+
+                <button id="btnShotScoring"
+                        class="btn btn-outline-primary">
+                    Скоринг
+                </button>
 
             </div>
 
         </div>
 
+        <div class="card-body p-0">
+            @foreach (TouhouGame game in Enum.GetValues(typeof(TouhouGame)))
+            {
+                <!-- СУРВ -->
+                <div class="shot-table"
+                     data-game="@game"
+                     data-category="Survival"
+                     style="display:@(game == TouhouGame.EoSD ? "block" : "none")">
+
+                    <div class="table-responsive">
+
+                        <table class="table table-hover table-sm align-middle mb-0 best-results-table">
+
+                            <thead>
+
+                                <tr>
+
+                                    <th>Шоттип</th>
+
+                                    @foreach (var difficulty in GameData.Difficulties[game])
+                                    {
+                                        <th class="text-center">
+                                            <span class="badge @difficulty.BadgeDiffClass()">
+                                                @difficulty
+                                            </span>
+                                        </th>
+                                    }
+
+                                </tr>
+
+                            </thead>
+
+                            <tbody>
+
+                                @{
+                                    var shotTypes = GameData.ShotTypes[game].ToList();
+
+                                    if (game == TouhouGame.HSiFS)
+                                    {
+                                        shotTypes.AddRange(new[]
+                                        {
+                                            "Reimu",
+                                            "Marisa",
+                                            "Cirno",
+                                            "Aya"
+                                        });
+                                    }
+                                }
+
+                                @foreach (var shot in shotTypes)
+                                {
+                                    <tr>
+
+                                        <td class="fw-semibold">
+                                            @shot
+                                        </td>
+
+                                        @foreach (var difficulty in GameData.Difficulties[game])
+                                        {
+                                            var cell = Model.SurvivalTables[game][difficulty][shot];
+
+                                            <td class="text-center">
+
+                                                @if (cell.Replay != null)
+                                                {
+                                                    <a asp-controller="Replay"
+                                                       asp-action="Replay"
+                                                       asp-route-id="@cell.Replay.Id"
+                                                       class="text-decoration-none">
+
+                                                        <span class="badge @ReplayService.BadgeResultClass(cell.Replay)">
+                                                            @ReplayService.BuildTypeOfSurvival(cell.Replay)
+                                                        </span>
+
+                                                    </a>
+                                                }
+                                                else
+                                                {
+                                                    <span class="text-secondary">—</span>
+                                                }
+
+                                            </td>
+                                        }
+
+                                    </tr>
+                                }
+
+                            </tbody>
+
+                        </table>
+
+                    </div>
+
+                </div>
+
+
+
+                <!-- СКОРИНГ -->
+
+                <div class="shot-table"
+                     data-game="@game"
+                     data-category="Scoring"
+                     style="display:none;">
+
+                    <div class="table-responsive">
+
+                        <table class="table table-hover table-sm align-middle mb-0 best-results-table">
+
+                            <thead>
+
+                                <tr>
+
+                                    <th>Шоттип</th>
+
+                                    @foreach (var difficulty in GameData.Difficulties[game])
+                                    {
+                                        <th class="text-center">
+                                            <span class="badge @difficulty.BadgeDiffClass()">
+                                                @difficulty
+                                            </span>
+                                        </th>
+                                    }
+
+                                </tr>
+
+                            </thead>
+
+                            <tbody>
+
+                                @foreach (var shot in GameData.ShotTypes[game])
+                                {
+                                    <tr>
+
+                                        <td class="fw-semibold">
+                                            @shot
+                                        </td>
+
+                                        @foreach (var difficulty in GameData.Difficulties[game])
+                                        {
+                                            var cell = Model.ScoringTables[game][difficulty][shot];
+
+                                            <td class="text-center">
+
+                                                @if (cell.Replay != null)
+                                                {
+                                                    <a asp-controller="Replay"
+                                                       asp-action="Replay"
+                                                       asp-route-id="@cell.Replay.Id"
+                                                       class="text-decoration-none">
+
+                                                        @String.Format("{0:N0}", cell.Replay.Score)
+
+                                                    </a>
+                                                }
+                                                else
+                                                {
+                                                    <span class="text-secondary">—</span>
+                                                }
+
+                                            </td>
+                                        }
+
+                                    </tr>
+                                }
+
+                            </tbody>
+
+                        </table>
+
+                    </div>
+
+                </div>
+            }
+
+
+
+        </div>
+
     </div>
+
+        <div class="card-body p-0">
+
+
 
             <div class="card shadow-sm mb-4">
                 <div class="card-header fw-bold">
@@ -311,3 +626,117 @@
     </div>
     </div>
 </div>
+
+<script>
+
+    // ---------- Лучшие результаты ----------
+
+    const btnSurvival = document.getElementById("btnSurvival");
+    const btnScoring = document.getElementById("btnScoring");
+
+    const survivalTable = document.getElementById("survivalTable");
+    const scoringTable = document.getElementById("scoringTable");
+
+    btnSurvival.addEventListener("click", () => {
+
+        survivalTable.style.display = "";
+        scoringTable.style.display = "none";
+
+        btnSurvival.classList.replace("btn-outline-primary", "btn-primary");
+        btnScoring.classList.replace("btn-primary", "btn-outline-primary");
+
+    });
+
+    btnScoring.addEventListener("click", () => {
+
+        survivalTable.style.display = "none";
+        scoringTable.style.display = "";
+
+        btnScoring.classList.replace("btn-outline-primary", "btn-primary");
+        btnSurvival.classList.replace("btn-primary", "btn-outline-primary");
+
+    });
+
+
+    // ---------- Таблицы всех игр по шоттипам и сложностям ----------
+
+    let currentGame = "@TouhouGame.EoSD";
+    let currentCategory = "Survival";
+
+    const shotTables = document.querySelectorAll(".shot-table");
+    const gameButtons = document.querySelectorAll(".game-btn");
+
+    const btnShotSurvival = document.getElementById("btnShotSurvival");
+    const btnShotScoring = document.getElementById("btnShotScoring");
+
+    function updateShotTables() {
+
+        shotTables.forEach(table => {
+
+            if (table.dataset.game === currentGame &&
+                table.dataset.category === currentCategory)
+            {
+                table.style.display = "";
+            }
+            else
+            {
+                table.style.display = "none";
+            }
+
+        });
+
+    }
+
+
+    // Переключение игры
+
+    gameButtons.forEach(button => {
+
+        button.addEventListener("click", () => {
+
+            currentGame = button.dataset.game;
+
+            gameButtons.forEach(btn => {
+                btn.classList.replace("btn-primary", "btn-outline-primary");
+            });
+
+            button.classList.replace("btn-outline-primary", "btn-primary");
+
+            updateShotTables();
+
+        });
+
+    });
+
+
+    // Сурв
+
+    btnShotSurvival.addEventListener("click", () => {
+
+        currentCategory = "Survival";
+
+        btnShotSurvival.classList.replace("btn-outline-primary", "btn-primary");
+        btnShotScoring.classList.replace("btn-primary", "btn-outline-primary");
+
+        updateShotTables();
+
+    });
+
+
+    // Скоринг
+
+    btnShotScoring.addEventListener("click", () => {
+
+        currentCategory = "Scoring";
+
+        btnShotScoring.classList.replace("btn-outline-primary", "btn-primary");
+        btnShotSurvival.classList.replace("btn-primary", "btn-outline-primary");
+
+        updateShotTables();
+
+    });
+
+
+    updateShotTables();
+
+</script>
