@@ -1,0 +1,149 @@
+﻿@model ReplayModel
+@using thrucommunity.Models
+
+<form asp-action="Moderate">
+
+    <input asp-for="Id" type="hidden" />
+
+    <div class="mb-3">
+        <label asp-for="Nickname"></label>
+        <input asp-for="Nickname" class="form-control" />
+    </div>
+
+    <div class="mb-3">
+        <label asp-for="Comment"></label>
+        <textarea asp-for="Comment"
+                  class="form-control"></textarea>
+    </div>
+
+    <div class="mb-3">
+        <label asp-for="Game"></label>
+
+        <select asp-for="Game"
+                asp-items="Html.GetEnumSelectList<TouhouGame>()"
+                class="form-select">
+        </select>
+    </div>
+
+    <div class="mb-3">
+        <label asp-for="ShotType"></label>
+        <input asp-for="ShotType"
+               class="form-control" />
+    </div>
+
+    <div class="mb-3">
+        <label asp-for="Category"></label>
+
+        <select asp-for="Category"
+                asp-items="Html.GetEnumSelectList<RunCategory>()"
+                class="form-select">
+        </select>
+    </div>
+
+    <div class="mb-3">
+        <label asp-for="Difficulty"></label>
+
+        <select asp-for="Difficulty"
+                asp-items="Html.GetEnumSelectList<Difficulty>()"
+                class="form-select">
+        </select>
+    </div>
+
+    <div class="mb-3">
+        <label asp-for="Score"></label>
+        <input asp-for="Score"
+               class="form-control" />
+    </div>
+
+    <div class="mb-3">
+        <label asp-for="DeathCount"></label>
+        <input asp-for="DeathCount"
+               class="form-control" />
+    </div>
+
+    <div class="form-check">
+        <input asp-for="NoMiss"
+               class="form-check-input" />
+        <label asp-for="NoMiss"
+               class="form-check-label"></label>
+    </div>
+
+    <div class="form-check">
+        <input asp-for="NoBomb"
+               class="form-check-input" />
+        <label asp-for="NoBomb"
+               class="form-check-label"></label>
+    </div>
+
+    <div class="form-check">
+        <input asp-for="NoThirdCondition"
+               class="form-check-input" />
+        <label asp-for="NoThirdCondition"
+               class="form-check-label"></label>
+    </div>
+
+    <div class="mb-3">
+        <label asp-for="ReplayLink"></label>
+        <input asp-for="ReplayLink"
+               class="form-control" />
+    </div>
+
+    <div class="mb-3">
+        <label asp-for="ReplayDate"></label>
+        <input asp-for="ReplayDate"
+               type="date"
+               class="form-control" />
+    </div>
+
+    <hr />
+
+    <button type="submit"
+            name="action"
+            value="approve_proven"
+            class="btn btn-success">
+
+        Принять
+
+    </button>
+
+    <button type="submit"
+            name="action"
+            value="approve_unproven"
+            class="btn btn-warning">
+
+        Принять (без пруфов)
+
+    </button>
+
+    <button type="submit"
+            name="action"
+            value="reject"
+            class="btn btn-danger">
+
+        Отклонить
+
+    </button>
+
+    @if (!string.IsNullOrEmpty(Model.ReplayFilePath))
+    {
+        <a asp-action="DownloadReplay"
+           asp-route-id="@Model.Id"
+           class="btn btn-secondary">
+
+            Скачать реплей
+
+        </a>
+    }
+
+    @if (!string.IsNullOrEmpty(Model.ReplayLink))
+    {
+        <a href="@Model.ReplayLink"
+           target="_blank"
+           class="btn btn-info">
+
+            Открыть видео
+
+        </a>
+    }
+
+</form>

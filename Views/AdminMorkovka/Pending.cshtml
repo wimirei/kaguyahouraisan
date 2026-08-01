@@ -1,0 +1,32 @@
+﻿@model IEnumerable<ReplayModel>
+
+<h2>Pending Replays</h2>
+
+<table class="table">
+    <thead>
+        <tr>
+            <th>Никнейм</th>
+            <th>Игра</th>
+            <th>Шоттайп</th>
+            <th></th>
+        </tr>
+    </thead>
+
+    <tbody>
+        @foreach (var item in Model)
+        {
+            <tr>
+                <td>@item.Nickname</td>
+                <td>@item.Game</td>
+                <td>@item.ShotType</td>
+
+                <td>
+                    <a asp-action="Moderate"
+                       asp-route-id="@item.Id">
+                        Open
+                    </a>
+                </td>
+            </tr>
+        }
+    </tbody>
+</table>

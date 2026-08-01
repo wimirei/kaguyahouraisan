@@ -1,0 +1,117 @@
+﻿@{
+    ViewData["Title"] = "Полезные ресурсы";
+}
+
+<div class="container mt-4">
+
+    <div class="card shadow">
+
+        <div class="card-header">
+            <h3 class="mb-0">
+                Полезные ресурсы
+            </h3>
+        </div>
+
+        <div class="card-body p-0">
+
+            <div class="row g-0">
+
+                <!-- МЕНЮ -->
+
+                <div class="col-lg-3 border-end">
+
+                    <div class="resource-menu">
+
+                        <details open>
+
+                            <summary>🛠 Программы</summary>
+
+                            <ul>
+
+                                <li><a href="#" onclick="loadArticle('thprac');return false;">thprac</a></li>
+
+                                <li><a href="#" onclick="loadArticle('vpatch');return false;">vpatch</a></li>
+
+                                <li><a href="#" onclick="loadArticle('locale_emulator');return false;">Locale Emulator</a></li>
+
+                                <li><a href="#" onclick="loadArticle('OILP');return false;">OpenInputLagPatch</a></li>
+
+                                <li><a href="#" onclick="loadArticle('dgvoodoo');return false;">DgVoodoo2</a></li>
+
+                            </ul>
+
+                        </details>
+
+                        <details>
+
+                            <summary>🎮 Игры</summary>
+
+                            <ul>
+
+                                <li><a href="#" onclick="loadArticle('pc98');return false;">Как играть в Touhou (1-5)</a></li>
+
+                                <li><a href="#" onclick="loadArticle('russian_patch');return false;">Русификация</a></li>
+
+                                <li><a href="#" onclick="loadArticle('patches');return false;">Патчи</a></li>
+
+                                <li><a href="#" onclick="loadArticle('pofv');return false;">Игра по сети в Touhou 9: PoFV</a></li>
+                                
+                                <li><a href="#" onclick="loadArticle('unlock_codes');return false;">Разблокирование контента</a></li>
+
+                                <li><a href="#" onclick="loadArticle('gameerrors');return false;">Частые ошибки</a></li>
+
+                            </ul>
+
+                        </details>
+
+                        <details>
+
+                            <summary>Жаргон</summary>
+
+                            <ul>
+
+                                <li><a href="#" onclick="loadArticle('jargon_games');return false;">Игры</a></li>
+                                <li><a href="#" onclick="loadArticle('jargon_sc');return false;">Спелл карты</a></li>
+                                <li><a href="#" onclick="loadArticle('jargon_gaming');return false;">Игровой сленг</a></li>
+
+                            </ul>
+
+                        </details>
+
+                        <details>
+
+                            <summary>🌐 Полезные сайты</summary>
+
+                            <ul>
+
+                                <li><a href="#" onclick="loadArticle('links');return false;">Полезные сайты</a></li>
+
+                            </ul>
+
+                        </details>
+
+                    </div>
+
+                </div>
+
+                <!-- СОДЕРЖИМОЕ -->
+
+                <div class="col-lg-9">
+
+                    <div class="p-4" id="articleContent">
+                    </div>
+
+                </div>
+
+            </div>
+
+        </div>
+
+    </div>
+
+</div>
+
+@section Scripts
+{
+    <script src="~/js/resources.js"></script>
+}

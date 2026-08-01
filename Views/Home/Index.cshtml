@@ -1,0 +1,142 @@
+﻿@model IEnumerable<ReplayModel>
+@using thrucommunity.Services
+@{
+    ViewData["Title"] = "Главная страница";
+    ViewData["Description"] = "Сайт посвящён серии игр Touhou Project и ориентирован на русскоязычное сообщество. Здесь вы найдётетаблицы базу реплеев,полезные материалы, руководства и другую информацию по играм серии.";
+}
+
+<div class="text-center pt-2 pb-2">
+
+    <h1 class="display-4 fw-bold mb-2">
+        Добро пожаловать!
+    </h1>
+
+    <p class="lead text-light-emphasis text-center mx-auto" style="max-width: 800px; text-align:center;">
+        Сайт посвящён серии игр <strong>Touhou Project</strong> и ориентирован
+        на русскоязычное сообщество. Здесь вы найдёте
+        <strong> таблицы рекордов</strong>, <strong>базу реплеев</strong>,
+        <strong> полезные материалы</strong>, <strong>руководства</strong> и
+        другую информацию по играм серии.
+    </p>
+
+</div>
+
+<div class="container mt-0" style="max-width: 1000px;">
+
+    <div class="card shadow-sm mb-4">
+
+        <div class="card-body text-center py-4">
+
+            <p class="mb-3 fs-5">
+                Присоединяйтесь к нашему Discord-серверу, где собираются
+                русскоязычные поклонники игр <strong>Touhou Project</strong>.
+                Здесь можно обсудить игры серии, поделиться своими результатами,
+                и просто приятно провести время.
+            </p>
+
+            <a class="btn btn-outline-primary px-4"
+               href="https://discord.gg/qTWYnCF257"
+               target="_blank">
+
+                💬 Вступить в Discord
+
+            </a>
+
+        </div>
+
+    </div>
+
+
+    <div class="card shadow-sm mb-4">
+
+
+        <div class="card-header fw-bold text-center">
+            Последние реплеи
+        </div>
+
+        <div class="card-body p-0 mb-4">
+            <div class="table-responsive">
+            <table class="table table-hover mb-0 replay-table">
+                <thead>
+                    <tr>
+                        <th>Дата</th>
+                        <th>Игрок</th>
+                        <th>Игра</th>
+                        <th>Сложность</th>
+                        <th>Шоттип</th>
+                        <th>Категория</th>
+                        <th>Результат</th>
+                        <th></th>
+                    </tr>
+                </thead>            
+
+            <tbody>
+
+                @foreach (var replay in Model)
+                {
+                    <tr>
+                        <td>
+                            @(replay.ReplayDate?.ToString("dd.MM.yyyy") ?? "-")
+                        </td>
+                        <td>
+                            @replay.Nickname
+                        </td>
+                        <td>
+                            <span class="badge @replay.Game.BadgeGameClass()">
+                                @replay.Game
+                            </span>
+                        </td>
+
+                        <td>
+                            <span class="badge @replay.Difficulty.BadgeDiffClass()">
+                                @replay.Difficulty
+                            </span>
+                        </td>
+
+                        <td>
+                            @replay.ShotType
+                        </td>
+
+                        <td>
+                            @replay.Category
+                        </td>
+
+                        <td>
+                            @if (replay.Category == RunCategory.Scoring)
+                            {
+                                @replay.Score?.ToString("N0");
+                            }
+                            else
+                            {
+                                @replay.TypeOfSurvival
+                            }
+                        </td>
+
+                        <td>
+                            <a asp-controller="Replay"
+                               asp-action="Replay"
+                               asp-route-id="@replay.Id"
+                               class="btn btn-sm btn-outline-primary">
+                                Подробнее
+                            </a>
+                        </td>
+                    </tr>
+                }
+            </tbody>
+            </table>
+            </div>
+        </div>
+    </div>
+
+    <div class="container mt-0" style="max-width: 800px;">
+
+        <div class="card shadow-sm mb-4">
+            <div class="card-body">
+                <h3 class="text-center mb-1">Особая благодарность:</h3>               
+                <p class="text-center mb-1">
+                    Rosya, Pear2077, Nnis, WhiteFosfor, Pcola_Zhzhzh, Ambassador9, Lumen, Avian, meoforb<br />
+                    За тестирование сайта, помощь в дизайне, идеями, написание статей и моральную поддержку!           
+            </div>
+        </div>
+    </div>
+</div>

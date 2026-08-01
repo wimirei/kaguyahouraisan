@@ -1,0 +1,313 @@
+﻿@model thrucommunity.Models.PlayerProfileViewModel
+@using thrucommunity.Models
+@using thrucommunity.Services
+
+@{
+    ViewData["Title"] = Model.Player.Nickname;
+}
+
+<div class="container mt-4" style="max-width: 1000px;">
+    <div class="mb-4 text-center">
+
+        <h1 class="display-5 fw-bold">
+            @Model.Player.Nickname
+        </h1>
+
+        <p class="text-secondary">
+            Профиль игрока
+        </p>
+    </div>
+
+
+            <div class="card shadow-sm mb-4">
+
+                <div class="card-header fw-bold">
+                    Статистика
+                </div>
+
+            <div class="card-body p-0">
+                    <ul class="card-list">
+                        <li class="card-list-item">
+                            L1CC: @Model.Player.L1CCcount
+                        </li>
+
+                        <li class="card-list-item">
+                            LNB: @Model.Player.LNBcount
+                        </li>
+
+                        <li class="card-list-item">
+                            LNB+: @Model.Player.LNBNxcount
+                        </li>
+
+                        <li class="card-list-item">
+                            LNM: @Model.Player.LNMcount
+                        </li>
+
+                        <li class="card-list-item">
+                            LNN: @Model.Player.LNNcount
+                        </li>
+
+                        <li class="card-list-item">
+                            LNNN: @Model.Player.LNNNcount
+                        </li>
+
+                        <li class="card-list-item">
+                            ExNN(N): @Model.Player.ExNNcount
+                        </li>
+
+                        <li class="card-list-item">
+                            🥇@Model.Player.FirstPlaceCount
+                        </li>
+
+                        <li class="card-list-item">
+                            🥈 @Model.Player.SecondPlaceCount
+                        </li>
+
+                        <li class="card-list-item">
+                            🥉@Model.Player.ThirdPlaceCount
+                        </li>
+
+                        <li class="card-list-item">
+                            WR @Model.Player.WRcount
+                        </li>
+                    </ul>
+                </div>
+    </div>
+
+    <div class="card shadow-sm mb-2 best-results-card">
+
+        <div class="card-header fw-bold py-2 px-3">
+            Лучшие результаты
+        </div>
+
+        <div class="card-body p-0">
+
+            <div class="table-responsive">
+
+                <table class="table table-hover table-sm align-middle mb-0 best-results-table">
+
+                    <thead>
+                        <tr>
+                            <th>Игра</th>
+
+                            @foreach (Difficulty difficulty in Enum.GetValues(typeof(Difficulty)))
+                            {
+                                <th class="text-center">@difficulty</th>
+                            }
+
+                        </tr>
+                    </thead>
+
+                    <tbody>
+
+                        @foreach (TouhouGame game in Enum.GetValues(typeof(TouhouGame)))
+                        {
+                            <tr>
+
+                                <td>
+                                    <span class="badge @game.BadgeGameClass()">
+                                        @game
+                                    </span>
+                                </td>
+
+                                @foreach (Difficulty difficulty in Enum.GetValues(typeof(Difficulty)))
+                                {
+                                    var cell = Model.BestResults[game][difficulty];
+
+                                    <td class="text-center">
+
+                                        @if (cell.Replay != null)
+                                        {
+                                            <a asp-controller="Replay"
+                                               asp-action="Replay"
+                                               asp-route-id="@cell.Replay.Id"
+                                               class="text-decoration-none">
+
+                                                <span class="badge @ReplayService.BadgeResultClass(cell.Replay)">
+                                                    @ReplayService.BuildTypeOfSurvival(cell.Replay)
+                                                </span>
+
+                                            </a>
+                                        }
+                                        else
+                                        {
+                                            <span class="text-secondary">—</span>
+                                        }
+
+                                    </td>
+                                }
+
+                            </tr>
+                        }
+
+                    </tbody>
+
+                </table>
+
+            </div>
+
+        </div>
+
+    </div>
+
+            <div class="card shadow-sm mb-4">
+                <div class="card-header fw-bold">
+                    Последние реплеи
+                </div>
+
+                <div class="card-body p-0">
+                <div class="table-responsive">
+                    <table class="table table-hover mb-0">
+                        <thead>
+                            <tr>
+                                <th>Дата</th>
+                                <th>Игра</th>
+                                <th>Сложность</th>
+                                <th>Шоттип</th>
+                                <th>Категория</th>
+                                <th>Результат</th>
+                                <th></th>
+                            </tr>
+                        </thead>
+
+                        <tbody>
+
+                            @foreach (var replay in Model.RecentReplays)
+                            {
+                                <tr>
+                                    <td>
+                                        @(replay.ReplayDate?.ToString("dd.MM.yyyy") ?? "-")
+                                    </td>
+                                    <td>
+                                        <span class="badge @replay.Game.BadgeGameClass()">
+                                            @replay.Game
+                                        </span>
+                                    </td>
+
+                                    <td>
+                                        <span class="badge @replay.Difficulty.BadgeDiffClass()">
+                                            @replay.Difficulty
+                                        </span>
+                                    </td>
+
+                                    <td>
+                                        @replay.ShotType
+                                    </td>
+
+                                    <td>
+                                        @replay.Category
+                                    </td>
+
+                                    <td>
+                                        @if (replay.Category == RunCategory.Scoring)
+                                        {
+                                            @replay.Score
+                                        }
+                                        else
+                                        {
+                                            @replay.TypeOfSurvival
+                                        }
+                                    </td>
+
+                                    <td>
+                                        <a asp-controller="Replay"
+                                           asp-action="Replay"
+                                           asp-route-id="@replay.Id"
+                                           class="btn btn-sm btn-outline-primary">
+                                            Подробнее
+                                        </a>
+                                    </td>
+                                </tr>
+                            }
+                        </tbody>
+                    </table>
+                </div>
+        </div>
+
+    </div>
+
+    <div class="card shadow-sm mb-4">
+
+        <div class="card-header fw-bold">
+            Все реплеи
+        </div>
+
+    <div class="card-body p-0" style="max-height: 520px; overflow-y: auto;">
+            
+            <table class="table table-hover mb-0">
+
+                <thead>
+                    <tr>
+
+                        <th>Дата</th>
+                        <th>Игра</th>
+                        <th>Сложность</th>
+                        <th>Шоттип</th>
+                        <th>Категория</th>
+                        <th>Результат</th>
+                        <th></th>
+
+                    </tr>
+                </thead>
+
+                <tbody>
+
+                    @foreach (var replay in Model.AllReplays)
+                    {
+                        <tr>
+
+                            <td>
+                                 @(replay.ReplayDate?.ToString("dd.MM.yyyy") ?? "-")
+                            </td>
+
+                            <td>
+                                <span class="badge @replay.Game.BadgeGameClass()">
+                                    @replay.Game
+                                </span>
+
+                            </td>
+                            <td>
+                                <span class="badge @replay.Difficulty.BadgeDiffClass()">
+                                    @replay.Difficulty
+                                </span>
+
+                            </td>
+
+                            <td>
+                                @replay.ShotType
+                            </td>
+
+                            <td>
+                                @replay.Category
+                            </td>
+
+                            <td>
+
+                                @if (replay.Category == RunCategory.Scoring)
+                                {
+                                    @replay.Score
+                                }
+                                else
+                                {
+                                    @replay.TypeOfSurvival
+                                }
+
+                            </td>
+
+                            <td>
+                                <a asp-controller="Replay"
+                                   asp-action="Replay"
+                                   asp-route-id="@replay.Id"
+                                   class="btn btn-sm btn-outline-primary">
+                                    Подробнее
+                                </a>
+                            </td>
+                        </tr>
+                    }
+
+                </tbody>
+            </table>
+        </div>
+    </div>
+    </div>
+</div>

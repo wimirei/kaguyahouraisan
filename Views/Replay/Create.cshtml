@@ -1,0 +1,220 @@
+﻿@model ReplayModel
+@using thrucommunity.Models
+@using System.Text.Json
+
+@{
+    ViewData["Title"] = "Загрузить реплей";
+}
+
+<div class="container mt-4">
+
+    <div class="row justify-content-center">
+        <div class="col-xl-8 col-lg-9">
+            <div class="card shadow-sm">
+                <div class="card-header">
+                    <h3 class="mb-0">Загрузка реплея</h3>
+                </div>
+                <div class="card-body">
+
+<form asp-action="Create"
+      method="post"
+      enctype="multipart/form-data">
+
+    <div asp-validation-summary="All"
+         class="text-danger">
+    </div>
+
+    <div class="text-center mb-4">
+        <p class="mb-1">Вы можете загрузить файл реплея или оставить ссылку на видео.</p>
+        <p class="mb-0">После отправки реплей будет проверен модератором и, после одобрения, опубликован на сайте.</p>
+    </div>
+
+                        <p class="mb-2">
+                            Реплей может быть отклонён по следующим причинам:
+                        </p>
+
+                        <ul class="mb-3 ps-3">
+                            <li><strong>Жульничество: </strong>Использование сейв стейтов, монтаж, пауз баферринг и др.</li>
+                            <li><strong>Чужой реплей: </strong>Выдача чужого реплея за свой запрещена.</li>
+                            <li><strong>Графическое изменение игры: </strong>Модификация любых графических элементов игры запрещена.</li>
+                        </ul>
+
+    <div class="mb-3">
+        <label asp-for="Nickname">Игрок</label>
+        <input asp-for="Nickname"
+               class="form-control" />
+    </div>
+
+     <div class="mb-3">
+              <label class="form-label">Игра</label>
+                            <select asp-for="Game"
+                                    id="gameSelect"
+                                    class="form-select">
+
+                                @foreach (string game in ViewBag.Games)
+                                {
+                                    <option value="@game">
+                                        @game
+                                    </option>
+                                }
+
+                            </select>
+    </div>
+
+    <div class="mb-3" id="finalContainer" style="display:none;">
+
+        <label class="form-label">Финал</label>
+
+        <select asp-for="INFinal"
+                id="finalSelect"
+             class="form-select">
+        </select>
+
+    </div>
+
+    <div class="mb-3">
+
+        <label asp-for="Difficulty">Сложность</label>
+
+        <select asp-for="Difficulty"
+                id="difficultySelect"
+                class="form-select">
+        </select>
+
+    </div>
+
+    <div class="mb-3">
+        <label class="form-label">Шоттип</label>
+    <select asp-for="ShotType"
+            id="shotTypeSelect"
+            class="form-select">
+    </select>
+    </div>
+
+    <div class="mb-3">
+        <label class="form-label">Категория</label>
+                <div class="d-flex gap-4">
+                    <div class="form-check">
+                        <input class="form-check-input"
+                               type="radio"
+                               asp-for="Category"
+                               value="@RunCategory.Survival"
+                               id="survivalRadio">
+                        <label class="form-check-label" for="survivalRadio">Cурвайвол </label>
+                    </div>
+
+                    <div class="form-check">
+                        <input class="form-check-input"
+                               type="radio"
+                               asp-for="Category"
+                               value="@RunCategory.Scoring"
+                               id="scoringRadio">
+                        <label class="form-check-label"for="scoringRadio"> Скоринг</label>
+                    </div>
+                </div>
+            </div>
+
+    <div id="deathCountContainer">
+        <label asp-for="DeathCount">Количество смертей</label>
+        <input asp-for="DeathCount" class="form-control" />
+    </div>
+
+    <div id="Score">
+        <label asp-for="Score">Очки</label>
+        <input asp-for="Score" class="form-control"/>
+    </div>
+
+                        <div class="form-check">
+                            <input asp-for="NoMiss"
+                                   class="form-check-input"
+                                   id="noMissCheck" />
+
+                            <label for="noMissCheck"
+                                   class="form-check-label">
+                                Без смертей
+                            </label>
+                        </div>
+
+                        <div class="form-check">
+                            <input asp-for="NoBomb"
+                                   class="form-check-input"
+                                   id="noBombCheck" />
+
+                            <label for="noBombCheck"
+                                   class="form-check-label">
+                                Без бомб
+                            </label>
+                        </div>
+
+                        <div class="form-check" id="thirdConditionContainer">
+                            <input asp-for="NoThirdCondition"
+                                   class="form-check-input"
+                                   id="thirdConditionCheck" />
+
+                            <label asp-for="NoThirdCondition"
+                                   id="thirdConditionLabel"
+                                   class="form-check-label">
+                            </label>
+                        </div>
+
+                        <div class="form-check" id="fourthConditionContainer">
+                            <input asp-for="No4thCondition"
+                                   class="form-check-input"
+                                   id="fourthConditionCheck" />
+
+                            <label asp-for="No4thCondition"
+                                   class="form-check-label">
+                                С четвертым условием (только для WBaWC)
+                            </label>
+                        </div>
+    <hr />
+    <div class="mb-3">
+        <label asp-for="ReplayFile">Файл реплея</label>
+
+        <input asp-for="ReplayFile"
+               type="file"
+               class="form-control" />
+
+        <input asp-for="ReplayDate"
+               type="hidden"
+               id="ReplayDate" />
+    </div>
+
+    <div class="mb-3">
+        <label asp-for="ReplayLink">Ссылка на видео</label>
+        <input asp-for="ReplayLink"
+               class="form-control" />
+    </div>
+
+    <div class="mb-3">
+        <label asp-for="Comment">Комментарий</label>
+        <textarea asp-for="Comment"
+                  class="form-control"
+                  rows="5">
+        </textarea>
+    </div>
+    <button type="submit"class="btn btn-primary w-100"> Отправить реплей </button>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+@section Scripts
+{
+    <script>
+        const shotTypes = @Html.Raw(JsonSerializer.Serialize(ViewBag.ShotTypes));
+
+        const difficulties = @Html.Raw(JsonSerializer.Serialize(ViewBag.Difficulties));
+
+        const finals = @Html.Raw(System.Text.Json.JsonSerializer.Serialize(ViewBag.Finals));
+
+        const thirdConditionGames = @Html.Raw(JsonSerializer.Serialize(ViewBag.ThirdConditionGames));
+
+        const thirdConditionNames = @Html.Raw(JsonSerializer.Serialize(ViewBag.ThirdConditionNames));
+
+        const fourthConditionGames = @Html.Raw(JsonSerializer.Serialize(ViewBag.FourthConditionGames));
+    </script>
+    <script src="~/js/replay-upload.js"></script>
+}

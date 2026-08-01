@@ -1,0 +1,132 @@
+﻿<h2>
+    DgVoodoo2
+</h2>
+
+<hr>
+
+<div class="alert alert-primary">
+
+    Многофункциональный патч\конвертер для старых игр, использующих DirectX до 9 включительно или API Glide (эмуляция 3д-ускорителей 3Dfx Voodoo). В случае с Touhou рекомендуется для применения вместе с Vpatch либо OpenInputLagPatch на современных Windows.
+
+</div>
+
+<hr>
+
+<h3>
+    Функции:
+</h3>
+
+<ul>
+
+    <li>Конвертация графического API в DirectX 11/12, улучшая совместимость с Windows 10/11 и исправляя некоторые недочёты.</li>
+
+    <li>Из п.1 вытекает возможность использовать Flip Presentation Model для игр в окне/без рамок, вместо Blt. Это позволяет выводить картинку игры напрямую на монитор, сильно снижая задержку от композитора.</li>
+
+    <li>Повышение разрешения игры и текстур через метод ближайшего соседа, билинейную интерполяцию и прочие.</li>
+
+    <li>4.	Изменение растяжения картинки в фуллскрине\окне.</li>
+
+</ul>
+
+<hr>
+
+<h3>
+    Установка:
+</h3>
+
+<ol>
+
+    <li>Из /MS/x86 копируем конверторы D3D8.dll или D3D9.dll (Touhou 6-9.5 используют DirectX 8, Touhou 10+ — DirectX 9) в папку с запускным файлом игры.</li>
+
+    <li>Заходим в dgVoodooCpl.exe. Нажимаем на кнопку Add и выбираем папку, где находится наша игра и DLL-файл.</li>
+
+    <li class="alert alert-secondary">Стоит отметить, что кнопка «.\» добавляет в список папку, в которой находится файл dgVoodooCpl.exe.</li>
+
+    <li>Нажимаем OK. В указанной папке должен появиться файл dgvoodoo.conf. Он и является конфигурационным.</li>
+
+    <li>Через dgVoodooCpl.exe мы можем изменять dgvoodoo.conf. Если игр несколько, dgvoodoo.conf вместе с DLL можно копировать в другие папки.</li>
+
+</ol>
+
+<hr>
+
+<h3>
+    Настройка dgVoodooCpl:
+</h3>
+
+<p>
+    Через DgVoodoo можно сделать много полезных твиков. Всех их не перечислить, но здесь отмечены некоторые функции. При наведении на параметры появляются подсказки на английском языке.<br>
+    Можно переключать режим окна/полного экрана в dgVoodooCpl.exe, но подобная настройка в Touhou (custom.exe) тоже может влиять на поведение.
+</p>
+
+<div class="alert alert-secondary">
+    <h4>Показ всех настроек конфига:</h4>
+    Пкм по любой области в dgVoodooCpl → Show all sections of the configuration. Это откроет нам доступ к продвинутым настройкам, вкладкам GeneralExt, GlideExt, DirectXExt.
+    <hr>
+    <h4>Отключение водяного знака:</h4>
+    DirectX → Miscellanneous → dgVoodoo Watermark = снять галочку.
+    <hr>
+    <h4>Включение Flip:</h4>
+    По умолчанию DgVoodoo не использует Flip т. к. это часть DirectX 12:
+    General → Rendering → Output API = DirectX 12
+    Либо можно вне зависимости от граф. API принудительно включить:
+    Вкладка GeneralExt → Presentation Model = flip_discard
+    <hr>
+    <h4>Изменение разрешения игры:</h4>
+    DirectX → Resolution = Max либо другое значение.
+    <div class="alert alert-warning">Известно, что значения все кроме Unforced могут визуально сломать интерфейс в Touhou 6-8</div>
+    <hr>
+    <h4>Повышение чёткости текстур и спрайтов:</h4>
+    DirectX → Texturing → Filtering = Force Point Sampled
+    <div class="alert alert-warning">Данная опция во всех значениях кроме app driven ломает задние фоны в Touhou 6</div>
+    <hr>
+    <h4>Изменение метода апскейла общей картинки:</h4>
+    По умолчанию стоит Bilinear.
+    <hr>
+    <h4>Увеличение изображения методом ближайшего соседа:</h4>
+    GeneralExt → Image Output → Resampling = Point Sampled
+    <hr>
+    <h4>Включение оптимизированного фуллскрина(alt-tab без чёрного экрана):</h4>
+    В Touhou выставляем Fullscreen заранее.
+    В dgVoodooCpl.exe:
+    <ol>
+        <li>General → Appearance → на Full Screen ставим точку.</li>
+        <li>Scaling Mode = Streched, keep Aspect Ratio или другое на ваше усмотрение.</li>
+        <li>GeneralExt → FullScreen mode attributes → Fake = галочку ставим.</li>
+        <li>Чтобы при сворачивании-разворачивании игра не растягивалась, в Windowed mode attributes ставим галочку на FullScreen Size и Borderless.</li>
+    </ol>
+    <hr>
+    <h4>Помогите у меня курсор в оверлее thprac’а нельзя двигать!:</h4>
+    Это происходит из-за изменённого параметра Resolution, игра думает, что работает всё ещё в 640x480. Решение: GeneralExt → Miscellanneous → Free mouse = галочку ставим.
+    <hr>
+    <h4>Отключение чёрного списка AMD видеокарт:</h4>
+    Создатель DgVoodoo ведёт чёрный список видеокарт AMD(RX 5xx, Vega, и т.д.), у которых есть проблема заполнения текстур сплошным цветом, проявляющееся в зависимости от драйвера. Для проверки на наличие проблемы чёрный список можно отключить:
+    DirectXExt → Miscellaneous → Suppress AMD blacklist = галочку поставить.
+
+</div>
+  
+<hr>
+
+<h3>
+
+    Ссылки:
+
+</h3>
+
+<ul>
+
+    <li>
+
+        <a href="https://github.com/dege-diosg/dgVoodoo2"
+           target="_blank">
+
+            DgVoodoo:
+
+        </a>
+
+    </li>
+
+</ul>
+
+<hr>
+

@@ -1,0 +1,118 @@
+﻿@model thrucommunity.Models.ReplayModel
+
+@{
+    ViewData["Title"] = "Edit Replay";
+}
+
+<div class="container mt-4">
+
+    <div class="card shadow-sm">
+
+        <div class="card-header fw-bold">
+            Edit Replay #@Model.Id
+        </div>
+
+        <div class="card-body">
+
+            <form method="post">
+
+                <input type="hidden" asp-for="Id" />
+
+                <div class="row">
+
+                    <div class="col-md-6 mb-3">
+                        <label class="form-label">Nickname</label>
+                        <input asp-for="Nickname" class="form-control" />
+                    </div>
+
+                    <div class="col-md-6 mb-3">
+                        <label class="form-label">Game</label>
+                        <select asp-for="Game"
+                                class="form-select"
+                                asp-items="Html.GetEnumSelectList<TouhouGame>()">
+                        </select>
+                    </div>
+
+                    <div class="col-md-6 mb-3">
+                        <label class="form-label">ShotType</label>
+                        <input asp-for="ShotType" class="form-control" />
+                    </div>
+
+                    <div class="col-md-6 mb-3">
+                        <label class="form-label">Difficulty</label>
+                        <select asp-for="Difficulty"
+                                class="form-select"
+                                asp-items="Html.GetEnumSelectList<Difficulty>()">
+                        </select>
+                    </div>
+
+                    <div class="col-md-6 mb-3">
+                        <label class="form-label">Category</label>
+                        <select asp-for="Category"
+                                class="form-select"
+                                asp-items="Html.GetEnumSelectList<RunCategory>()">
+                        </select>
+                    </div>
+
+                    <div class="col-md-6 mb-3">
+                        <label class="form-label">Score</label>
+                        <input asp-for="Score" class="form-control" />
+                    </div>
+
+                    <div class="col-md-6 mb-3">
+                        <label class="form-label">Death Count</label>
+                        <input asp-for="DeathCount" class="form-control" />
+                    </div>
+
+                    <div class="col-md-6 mb-3">
+                        <label class="form-label">Replay Link</label>
+                        <input asp-for="ReplayLink" class="form-control" />
+                    </div>
+
+                    <div class="col-md-6 mb-3">
+                        <label class="form-label">Replay Date</label>
+                        <input asp-for="ReplayDate"
+                               type="date"
+                               class="form-control" />
+                    </div>
+
+                    <div class="col-12 mb-3">
+
+                        <div class="form-check">
+                            <input asp-for="NoMiss" class="form-check-input" />
+                            <label class="form-check-label">No Miss</label>
+                        </div>
+
+                        <div class="form-check">
+                            <input asp-for="NoBomb" class="form-check-input" />
+                            <label class="form-check-label">No Bomb</label>
+                        </div>
+
+                        <div class="form-check">
+                            <input asp-for="NoThirdCondition" class="form-check-input" />
+                            <label class="form-check-label">No Third Condition</label>
+                        </div>
+
+                    </div>
+
+                </div>
+
+                <div class="d-flex gap-2">
+
+                    <button type="submit" class="btn btn-primary">
+                        Save
+                    </button>
+
+                    <a asp-action="Replays"
+                       class="btn btn-secondary">
+                        Cancel
+                    </a>
+
+                </div>
+
+            </form>
+
+        </div>
+    </div>
+
+</div>

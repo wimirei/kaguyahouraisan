@@ -1,0 +1,198 @@
+﻿@model List<thrucommunity.Models.GameTableViewModel>
+@using thrucommunity.Services
+
+@{
+    ViewData["Title"] = "LNB";
+    ViewData["Description"] = "Таблица лидеров Touhou LNB. Лучшие прохождения сложности уровня Lunatic без использования бомб, игроки, реплеи и статистика достижений.";
+}
+<div class="container mt-4" style="max-width: 1100px;">
+
+    <h1 class="text-center mb-4">
+        Lunatic No Bomb
+    </h1>
+
+    <div class="card shadow-sm mb-4">
+
+        <div class="card-header fw-bold">
+            Что означает LNB?
+        </div>
+
+        <div class="card-body">
+
+            <p class="mb-2">
+                <strong>LNB (Lunatic No Bomb)</strong> — прохождение игры:
+            </p>
+
+            <ul class="mb-3 ps-3">
+                <li>на сложности <strong>Lunatic</strong>;</li>
+                <li>без использования бомб;</li>
+                <li>с учётом дополнительных условий (NBB, NT и других).</li>
+            </ul>
+
+            <p class="mb-2">
+                <strong>Дополнительные условия:</strong>
+            </p>
+
+            <ul class="mb-3 ps-3">
+                <li><strong>PCB:</strong> No Border Break - Без разрушения барьера;</li>
+                <li><strong>UFO:</strong> No Ventora - Без призыва UFO;</li>
+                <li><strong>TD:</strong> No Trance - Без использования транса;</li>
+                <li><strong>HSiFS:</strong> No Release - Без использования релиза;</li>
+                <li><strong>WBaWC:</strong> No Hyper Break - Без разрушения гипер барьера;</li>
+                <li><strong>UM:</strong> No Cards - Без покупки карт (разрешается покупка карты на золото);</li>
+                <li><strong>FW:</strong> No Hyper Break - Без разрушения гипер барьера;</li>
+            </ul>
+
+            <p class="mb-2">
+                <strong>PoFV:</strong>
+            </p>
+            <ul class="mb-3 ps-3">
+                В таблицу записываются реплеи с условием No Charges: Без использования чарджей.
+            </ul>
+
+            <p class="text-muted mb-0">
+                В таблице для каждого шоттипа отображаются все игроки,
+                выполнившие условия челленджа.
+            </p>
+
+        </div>
+
+    </div>
+    <!-- ИКОНКИ ИГР -->
+    <div class="d-flex flex-wrap gap-2 justify-content-center mb-4">
+
+        @foreach (var game in Model)
+        {
+            <div class="game-icon"
+                 onclick="showGame('game_@game.Game')">
+
+                <img src="~/images/games/@(game.Game).png"
+                     class="img-fluid rounded shadow" />
+
+                <div class="game-title">
+                    @game.Game
+                </div>
+
+                <div class="game-title-full">
+                    @game.Game.GameIconTextClass()
+                </div>
+
+            </div>
+
+        
+        }
+
+    </div>
+
+    <!-- ТАБЛИЦЫ ПО ИГРАМ -->
+    @foreach (var game in Model)
+    {
+        <div id="game_@game.Game"
+             class="game-table"
+             style="display:none;">
+
+            <div class="card shadow-sm mb-4">
+
+                <div class="card-header fw-bold text-center">
+                    @game.Game.GameTextClass()
+                </div>
+
+                <div class="card-body p-0">
+
+                    <table class="table table-hover mb-0">
+
+                        <thead class="table-light">
+                            <tr>
+                                <th>Шоттип</th>
+                                @if(game.Game == TouhouGame.IN)
+                                {
+                                <th>Финал</th>
+                                }
+                                <th>Всего игроков</th>
+                                <th>Игроки</th>                             
+                            </tr>
+                        </thead>
+
+                        <tbody>
+
+                            @foreach (var row in game.Records)
+                            {
+                                <tr>
+
+                                    <td>
+                                        @row.ShotType
+                                    </td>
+
+                                    @if (game.Game == TouhouGame.IN)
+                                    {
+                                        <td>
+                                            @row.INFinal
+                                        </td>
+                                    }
+                                    <td>
+                                        @row.PlayersCount
+                                    </td>
+
+                                    <td>
+
+                                        @if (row.Players.Any())
+                                        {
+                                            @for (int i = 0; i < row.Players.Count; i++)
+                                            {
+                                                var player = row.Players[i];
+                                                <a asp-controller="Replay"
+                                                   asp-action="Replay"
+                                                   asp-route-id="@player.ReplayId"
+                                                   class="text-decoration-none">
+                                                    <span class="@(player.NoThirdCondition ? "text-success fw-bold" : "")">
+                                                    @player.Nickname@if (player.DeathCount != null)
+                                                    {
+                                                        @( $" ({player.DeathCount}М)" )
+                                                    }
+                                                    </span>
+                                                </a>
+                                                @if (i != row.Players.Count - 1)
+                                                {
+                                                    <span>, </span>
+                                                }
+                                            }
+                                        }
+                                        else
+                                        {
+                                            <span class="text-muted">—</span>
+                                        }
+
+                                    </td>
+
+                                </tr>
+                            }
+
+                        </tbody>
+
+                    </table>
+
+                </div>
+
+            </div>
+
+        </div>
+    }
+
+</div>
+
+<script>
+    function showGame(id)
+    {
+        document.querySelectorAll(".game-table")
+            .forEach(x => x.style.display = "none");
+
+        const el = document.getElementById(id);
+        if (el) el.style.display = "block";
+    }
+
+    window.onload = function ()
+    {
+        const first = document.querySelector(".game-table");
+        if (first) first.style.display = "block";
+    };
+</script>

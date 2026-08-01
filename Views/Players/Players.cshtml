@@ -1,0 +1,109 @@
+﻿@model IEnumerable<PlayerModel>
+@using thrucommunity.Services
+
+@{
+    ViewData["Title"] = "Игроки";
+}
+
+<div class="container mt-4" style="max-width: 1000px;">
+
+    <div class="card shadow-sm mb-4">
+
+        <div class="card-header fw-bold text-center">
+            Игроки
+        </div>
+
+        <div class="card-body p-0">
+
+             <div class="table-responsive">
+
+            <table class="table table-hover mb-0">
+
+                <thead>
+                    <tr>
+                        <th class="text-center fw-bold">#</th>
+                        <th>Никнейм</th>
+                        <th>L1CC</th>
+                        <th>LNB(+)</th>
+                        <th>LNM</th>
+                        <th>LNN(+)</th>
+                        <th>ExNN(N)</th>
+                        <th>🥉</th>
+                        <th>🥈</th>
+                        <th>🥇</th>
+                        <th>WR</th>
+                    </tr>
+                </thead>
+
+                <tbody>
+                    @{
+                        int rank = 1;
+                    }
+
+                    @foreach (var player in Model)
+                    {
+                        <tr>
+                            <td class="text-center fw-bold @(rank == 1 ? "rank-number-first" : rank == 2 ? "rank-number-second" : rank == 3 ? "rank-number-third" : "")">
+                                @rank
+                            </td>
+
+                            <td>
+                                <a asp-controller="Players"
+                                   asp-action="Profile"
+                                   asp-route-nickname="@player.Nickname">
+                                    @player.Nickname
+                                </a>
+                            </td>
+
+                            <td>
+                                @player.L1CCcount
+                            </td>
+
+                            <td>
+                                @(player.LNBcount + player.LNBNxcount)
+                            </td>
+
+                            <td>
+                                @player.LNMcount
+                            </td>
+
+                            <td>
+                                @(player.LNNcount + player.LNNNcount)
+                            </td>
+
+                            <td>
+                                @(player.ExNNcount)
+                            </td>
+
+                            <td>
+                                @player.ThirdPlaceCount
+                            </td>
+
+                            <td>
+                                @player.SecondPlaceCount
+                            </td>
+
+                            <td>
+                                @player.FirstPlaceCount
+                            </td>
+
+                            <td>
+                                @player.WRcount
+                            </td>
+
+                        </tr>
+
+                        rank++;
+                    }
+
+                </tbody>
+
+            </table>
+
+            </div>
+
+        </div>
+
+    </div>
+
+</div>

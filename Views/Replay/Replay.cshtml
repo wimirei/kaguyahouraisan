@@ -1,0 +1,252 @@
+﻿@model thrucommunity.Models.ReplayModel
+@using thrucommunity.Models
+@using thrucommunity.Services
+
+@{
+    ViewData["Title"] = "Replay";
+}
+
+<div class="container mt-4">
+
+    <div class="mb-4">
+
+        <h1 class="display-5 fw-bold">
+            @Model.Game.GameTextClass()
+        </h1>
+
+        <div class="text-secondary fs-5">
+
+            <span class="badge @Model.Category.BadgeCategoryClass() me-2">
+                @Model.Category
+            </span>
+
+            <span class="badge @Model.Game.BadgeGameClass() me-2">
+                @Model.Game
+            </span>
+
+            <span class="badge @Model.Difficulty.BadgeDiffClass() me-2">
+                @Model.Difficulty
+            </span>
+
+            <span class="badge bg-success">
+                @Model.ShotType
+            </span>
+        </div>
+    </div>
+
+    <div class="row">
+
+        <div class="col-lg-5 mb-4">
+            <div class="card shadow-sm h-100">
+                <div class="card-header fw-bold">
+                    @if (Model.Category == RunCategory.Scoring)
+                    {
+                        <text>Очки</text>
+                    }
+                    else
+                    {
+                        <text>Рeзультат</text>
+                    }
+                </div>
+
+                <div class="card-body text-center">
+
+                    @if (Model.Category == RunCategory.Scoring)
+                    {
+                        <h1 class="display-3 fw-bold">
+                            @Model.Score?.ToString("N0")
+                        </h1>
+                    }
+                    else
+                    {
+                        <h1 class="display-3 fw-bold">
+                            @Model.TypeOfSurvival
+                        </h1>
+                    }
+                    <hr />
+
+                    <p class="fs-5">
+                        Игрок:
+                            <a asp-controller="Players"
+                               asp-action="Profile"
+                               asp-route-nickname="@Model.Nickname">@Model.Nickname</a>
+                    </p>
+
+                    <p class="text-secondary">
+                        Дата реплея
+                        @(Model.ReplayDate?.ToString("dd MMMM yyyy") ?? "-")
+                    </p>
+
+                    @if (!string.IsNullOrWhiteSpace(Model.ReplayFilePath))
+                    {
+                        <a asp-controller="Replay"
+                           asp-action="DownloadReplay"
+                           asp-route-id="@Model.Id"
+                           class="btn btn-secondary">
+                            Скачать реплей
+                        </a>
+                    }
+
+                    @if (!string.IsNullOrWhiteSpace(Model.ReplayLink))
+                    {
+                        <a href="@Model.ReplayLink.ToString()"
+                           target="_blank"
+                           class="btn btn-primary">
+                            Смотреть видео
+                        </a>
+                    }
+                </div>
+            </div>
+        </div>
+
+        <div class="col-lg-7 mb-4">
+            <div class="card shadow-sm h-100">
+                <div class="card-header fw-bold">
+                    Комментарий
+                </div>
+                <div class="card-body">
+
+                    @if (string.IsNullOrWhiteSpace(Model.Comment))
+                    {
+                        <p class="text-secondary">
+                        </p>
+                    }
+                    else
+                    {
+                        <p>
+                            @Model.Comment
+                        </p>
+                    }
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="row">
+        <div class="col-lg-6">
+            <div class="card shadow-sm">
+                <div class="card-header fw-bold">
+                    Детали реплея:
+                </div>
+                <div class="card-body">
+                    <table class="table table-borderless mb-0">
+                        <tr>
+                            <th>Игра</th>
+                            <td>@Model.Game</td>
+                        </tr>
+                        <tr>
+                            <th>Шоттип</th>
+                            <td>@Model.ShotType</td>
+                        </tr>
+                        <tr>
+                            <th>Сложность</th>
+                            <td>@Model.Difficulty</td>
+                        </tr>
+                        <tr>
+                            <th>Категория</th>
+                            <td>@Model.Category</td>
+                        </tr>
+
+                        @if(Model.Game == TouhouGame.IN && Model.Difficulty != Difficulty.Extra)
+                        {
+                            <tr>
+                                <th>Финал</th>
+                                <td>@Model.INFinal</td>
+                            </tr>
+                        }
+
+
+
+                        @if (Model.Category == RunCategory.Survival)
+                        {
+                            <tr>
+
+                                <th>Результат</th>
+
+                                <td>@Model.TypeOfSurvival</td>
+
+                            </tr>
+                        }
+
+                        @if (Model.Category == RunCategory.Survival &&
+                                                !Model.NoMiss && Model.DeathCount != null)
+                        {
+                            <tr>
+
+                                <th>Количество смертей</th>
+
+                                <td>@Model.DeathCount</td>
+
+                            </tr>
+                        }
+                        @if (Model.Category == RunCategory.Survival && Model.NoMiss)
+                        {
+                            <tr>
+                                <th>Без смертей</th>
+                                <td>@(Model.NoMiss ? "🗸" : "❌")</td>
+                            </tr>
+                        }
+
+                        @if (Model.NoBomb)
+                        {
+                            <tr>
+
+                                <th>Без бомб</th>
+
+                                <td>
+
+                                    @(Model.NoBomb ? "🗸" : "❌")
+
+                                </td>
+
+                            </tr>
+                        }
+
+                        @if (ReplayService.SupportsThirdCondition(Model.Game))
+                        {            
+                        <tr>
+
+                            <th>@ReplayService.ThirdConditionRUName(Model.Game) </th>
+
+                            <td>
+
+                                @(Model.NoThirdCondition ? "🗸" : "❌")
+
+                            </td>
+                        </tr>
+                        }
+
+                    </table>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-lg-6">
+            <div class="card shadow-sm">
+                <div class="card-header fw-bold">Подробнее</div>
+                <div class="card-body">
+                    <table class="table table-borderless mb-0">
+                        <tr>
+                            <th>Загружено</th>
+                            <td>
+                                @Model.SubmittedAtUtc.ToLocalTime().ToString("dd MMMM yyyy")
+                            </td>
+                        </tr>
+                        <tr>
+                            <th>Статус</th>
+                            <td>
+                                @Model.SubmissionStatus
+                            </td>
+                        </tr>
+
+                        <tr>
+                            <th>Подтвержден</th>
+                            <td>
+                                @(Model.Proven ? "Yes" : "No")
+                            </td>
+                        </tr>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

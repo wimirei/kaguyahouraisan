@@ -1,0 +1,245 @@
+﻿@model List<thrucommunity.Models.ScoringGameViewModel>
+@using thrucommunity.Services
+
+@{
+    ViewData["Title"] = "Cкоринг";
+}
+
+<div class="container mt-4" style="max-width: 1100px;">
+
+    <h1 class="text-center mb-4">
+        Таблица рекордов по очкам
+    </h1>
+
+    <!-- ИКОНКИ ИГР -->
+    <div class="d-flex flex-wrap gap-2 justify-content-center mb-4">
+
+        @foreach (var game in Model)
+        {
+            <div class="game-icon"
+                 onclick="selectGame('@game.Game')">
+
+                <img src="~/images/games/@(game.Game).png"
+                     class="img-fluid rounded shadow" />
+
+                <div class="game-title">
+                    @game.Game
+                </div>
+
+                <div class="game-title-full">
+                    @game.Game.GameIconTextClass()
+                </div>
+
+            </div>
+
+
+        }
+
+    </div>
+
+    @foreach (var game in Model)
+    {
+        <div id="game_@game.Game"
+             class="game-block"
+             style="display:none;">
+
+            <div class="card shadow-sm mb-4">
+
+                <div class="card-header fw-bold text-center">
+
+                    @game.Game
+
+                </div>
+
+                <div class="card-body">
+
+                    <!-- КНОПКИ СЛОЖНОСТЕЙ -->
+                    <div class="mb-3">
+
+                        @foreach (var difficulty in game.Difficulties)
+                        {
+                            <button class="btn btn-diff @difficulty.Difficulty.DifficultyButtonClass() btn-sm me-2 mb-2"
+                                    onclick="selectDifficulty(event,'@game.Game','@difficulty.Difficulty')">
+
+                                @difficulty.Difficulty
+
+                            </button>
+                        }
+
+                    </div>
+
+                    @foreach (var difficulty in game.Difficulties)
+                    {
+                        <div id="difficulty_@(game.Game)_@(difficulty.Difficulty)"
+                             class="difficulty-block"
+                             style="display:none;">
+
+                            <!-- КНОПКИ ШОТТИПОВ -->
+                            <div class="mb-3">
+
+                                @foreach (var shot in difficulty.ShotTypes)
+                                {
+                                    <button class="btn btn-outline-secondary btn-sm me-2 mb-2"
+                                            onclick="selectShot('@game.Game','@difficulty.Difficulty','@shot.ShotType.Replace(" ", "_")')">
+
+                                        @shot.ShotType
+
+                                    </button>
+                                }
+
+                            </div>
+
+                            @foreach (var shot in difficulty.ShotTypes)
+                            {
+                                <div id="shot_@(game.Game)_@(difficulty.Difficulty)_@(shot.ShotType.Replace(" ", "_"))"
+                                     class="shot-block"
+                                     style="display:none;">
+
+                                    <table class="table table-hover">
+
+                                        <thead class="table-light">
+
+                                            <tr>
+
+                                                <th>#</th>
+                                                <th>Игрок</th>
+                                                <th>Очки</th>
+                                                <th>Дата</th>
+                                                <th>Реплей</th>
+
+                                            </tr>
+
+                                        </thead>
+
+                                        <tbody>
+
+                                            @{
+                                                int place = 1;
+                                            }
+
+                                            @foreach (var replay in shot.Replays)
+                                            {
+                                                <tr>
+
+                                                    <td>@place</td>
+
+                                                    <td>
+                                                        @replay.Nickname
+                                                    </td>
+
+                                                    <td>
+                                                        @replay.Score.ToString("N0")
+                                                    </td>
+
+                                                    <td>
+                                                        @replay.ReplayDate.ToString("dd.MM.yyyy")
+                                                    </td>
+
+                                                    <td>
+
+                                                        <a asp-controller="Replay"
+                                                           asp-action="Replay"
+                                                           asp-route-id="@replay.ReplayId"
+                                                           class="btn btn-sm btn-outline-primary">
+
+                                                            Подробнее
+
+                                                        </a>
+
+                                                    </td>
+
+                                                </tr>
+
+                                                place++;
+                                            }
+
+                                            @if (!shot.Replays.Any())
+                                            {
+                                                <tr>
+
+                                                    <td colspan="5"
+                                                        class="text-center text-secondary">
+
+                                                        Нет записей
+
+                                                    </td>
+
+                                                </tr>
+                                            }
+
+                                        </tbody>
+
+                                    </table>
+
+                                </div>
+                            }
+
+                        </div>
+                    }
+
+                </div>
+
+            </div>
+
+        </div>
+    }
+
+</div>
+
+<script>
+
+    function hideAll(className)
+    {
+        document.querySelectorAll(className)
+            .forEach(x => x.style.display = "none");
+    }
+
+    function selectGame(game)
+    {
+        hideAll(".game-block");
+
+        document.getElementById("game_" + game)
+            .style.display = "block";
+
+        hideAll(".difficulty-block");
+        hideAll(".shot-block");
+    }
+
+    function selectDifficulty(event, game, difficulty)
+    {
+        document.querySelectorAll("#game_" + game + " .difficulty-block")
+            .forEach(x => x.style.display = "none");
+
+        document.querySelectorAll("#game_" + game + " .shot-block")
+            .forEach(x => x.style.display = "none");
+
+        document.querySelectorAll("#game_" + game + " .btn-diff")
+            .forEach(x => x.classList.remove("active"));
+
+        event.currentTarget.classList.add("active");
+
+        document.getElementById(
+            "difficulty_" + game + "_" + difficulty)
+            .style.display = "block";
+    }
+
+    function selectShot(game,difficulty,shot)
+    {
+        document.querySelectorAll(
+            "#difficulty_" + game + "_" + difficulty + " .shot-block")
+            .forEach(x => x.style.display = "none");
+
+        document.getElementById(
+            "shot_" + game + "_" + difficulty + "_" + shot)
+            .style.display = "block";
+    }
+
+    window.onload = function ()
+    {
+        const first = document.querySelector(".game-block");
+
+        if(first)
+            first.style.display = "block";
+    };
+
+</script>

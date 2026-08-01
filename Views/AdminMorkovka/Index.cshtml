@@ -1,0 +1,61 @@
+﻿<div class="card shadow-sm mb-3">
+    <div class="card-header fw-bold">
+        Админские приколы
+    </div>
+
+    @if (TempData["SuccessMessage"] != null)
+    {
+        <div class="d-flex justify-content-center mb-4">
+
+            <div class="alert alert-success alert-dismissible fade show w-75 shadow-sm"
+                 role="alert">
+
+                <strong>✓ Успешно!</strong>
+                Статистика всех игроков пересчитана.
+
+                <button type="button"
+                        class="btn-close"
+                        data-bs-dismiss="alert">
+                </button>
+
+            </div>
+
+        </div>
+    }
+
+    <div class="card-body">
+
+        <form method="post" asp-action="ResyncAllReplays">
+            <button class="btn btn-warning">
+                Синхронизация всех реплеев
+            </button>
+        </form>
+
+        <form asp-controller="AdminMorkovka"
+              asp-action="RecalculateAllPlayers"
+              method="post">
+
+            @Html.AntiForgeryToken()
+
+            <button type="submit" class="btn btn-primary">
+                Пересчитать статистику ВСЕХ игроков
+            </button>
+
+        </form>
+
+        <a class="btn btn-primary"
+           asp-controller="AdminMorkovka"
+           asp-action="Replays">
+            Все реплеи
+        </a>
+
+        <a class="btn btn-primary"
+           asp-controller="AdminMorkovka"
+           asp-action="Pending">
+            Ожидающие проверку
+        </a>
+
+    </div>
+
+
+</div>

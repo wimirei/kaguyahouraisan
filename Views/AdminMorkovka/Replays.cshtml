@@ -1,0 +1,105 @@
+﻿@model ReplayAdminViewModel
+
+<div class="container mt-4">
+
+    <div class="card shadow-sm mb-3">
+        <div class="card-header fw-bold">
+            Admin Replays
+        </div>
+
+        <div class="card-body">
+
+            <form method="get" asp-action="Replays" class="mb-3 d-flex gap-2">
+
+                <input type="text"
+                       name="search"
+                       value="@Model.SearchNickname"
+                       class="form-control"
+                       placeholder="Search nickname..." />
+
+                <button class="btn btn-primary">
+                    Search
+                </button>
+
+                <a class="btn btn-secondary"
+                   asp-action="Replays">
+                    Reset
+                </a>
+
+            </form>
+
+            <table class="table table-hover">
+                <thead>
+                    <tr>
+                        <th>ID</th>
+                        <th>Nickname</th>
+                        <th>Game</th>
+                        <th>Score</th>
+                        <th>Date</th>
+                        <th></th>
+                    </tr>
+                </thead>
+
+                <tbody>
+                    @foreach (var r in Model.Replays)
+                    {
+                        <tr>
+                            <td>@r.Id</td>
+                            <td>@r.Nickname</td>
+                            <td>@r.Game</td>
+                            <td>@r.Score</td>
+                            <td>@r.SubmittedAtUtc.ToString("dd.MM.yyyy")</td>
+
+                            <td class="text-end">
+
+                                <a class="btn btn-sm btn-outline-primary"
+                                   asp-action="Edit"
+                                   asp-route-id="@r.Id">
+                                    Edit
+                                </a>
+
+                                <form asp-action="Delete"
+                                      asp-route-id="@r.Id"
+                                      asp-route-search="@Model.SearchNickname"
+                                      asp-route-page="@Model.CurrentPage"
+                                      method="post"
+                                      class="d-inline">
+
+                                    <button class="btn btn-sm btn-outline-danger"
+                                            onclick="return confirm('Delete replay?')">
+                                        Delete
+                                    </button>
+
+                                </form>
+
+                            </td>
+                        </tr>
+                    }
+                </tbody>
+            </table>
+
+        </div>
+    </div>
+
+    <div class="text-center">
+
+        @for (int i = 1; i <= Model.TotalPages; i++)
+        {
+            if (i == Model.CurrentPage)
+            {
+                <span class="btn btn-dark btn-sm">@i</span>
+            }
+            else
+            {
+                <a class="btn btn-outline-dark btn-sm"
+                   asp-action="Replays"
+                   asp-route-page="@i"
+                   asp-route-search="@Model.SearchNickname">
+                    @i
+                </a>
+            }
+        }
+
+    </div>
+
+</div>
