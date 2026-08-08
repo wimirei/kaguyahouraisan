@@ -62,7 +62,7 @@ namespace thrucommunity.Controllers
 
             if (result == PasswordVerificationResult.Success || result == PasswordVerificationResult.SuccessRehashNeeded)
             {
-                var claims = new List<Claim> { new Claim(ClaimTypes.Role,"Admin")};
+                var claims = new List<Claim> { new Claim(ClaimTypes.Role, "Admin") };
 
                 var identity =
                     new ClaimsIdentity(

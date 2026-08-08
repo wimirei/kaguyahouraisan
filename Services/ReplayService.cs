@@ -1,5 +1,4 @@
-﻿using Microsoft.EntityFrameworkCore;
-using thrucommunity.Models;
+﻿using thrucommunity.Models;
 
 namespace thrucommunity.Services
 {
@@ -8,7 +7,7 @@ namespace thrucommunity.Services
         public static string BuildTypeOfSurvival(ReplayModel replay)
         {
             //if (replay.Category != RunCategory.Survival)
-               // return "Scoring";
+            // return "Scoring";
 
             string prefix = replay.Difficulty switch
             {
@@ -42,7 +41,7 @@ namespace thrucommunity.Services
                 {
                     result = "NB";
 
-                    if(replay.NoThirdCondition && replay.No4thCondition)
+                    if (replay.NoThirdCondition && replay.No4thCondition)
                     {
                         result += "NN";
                     }
@@ -54,7 +53,7 @@ namespace thrucommunity.Services
                         if (replay.No4thCondition)
                             result += FourthConditionName(replay.Game);
                     }
-                    
+
                 }
             }
             else if (replay.NoMiss)
@@ -154,7 +153,7 @@ namespace thrucommunity.Services
         {
             return game switch
             {
-                TouhouGame.WBaWC => "NBR",           
+                TouhouGame.WBaWC => "NBR",
                 _ => ""
             };
         }

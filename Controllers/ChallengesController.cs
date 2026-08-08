@@ -25,15 +25,11 @@ namespace thrucommunity.Controllers
                     r.Difficulty == Difficulty.Lunatic &&
                     r.NoBomb &&
                     (
-                        // Обычный LNB
                         (
                             r.Game != TouhouGame.PoFV &&
                             !r.NoMiss
                         )
-
                         ||
-
-                        // PoFV
                         (
                             r.Game == TouhouGame.PoFV &&
                             (
@@ -56,16 +52,16 @@ namespace thrucommunity.Controllers
         {
             var replays = await _context.Replays
                 .Where(r =>
-                r.SubmissionStatus == SubmissionStatuses.Approved &&
-                r.NoBomb &&
-                r.NoMiss &&
-                (
-                    r.Difficulty == Difficulty.Extra ||
+                    r.SubmissionStatus == SubmissionStatuses.Approved &&
+                    r.NoBomb &&
+                    r.NoMiss &&
                     (
-                        r.Game == TouhouGame.PCB &&
-                        r.Difficulty == Difficulty.Phantasm
-                    )
-                ))
+                        r.Difficulty == Difficulty.Extra ||
+                        (
+                            r.Game == TouhouGame.PCB &&
+                            r.Difficulty == Difficulty.Phantasm
+                        )
+                    ))
                 .ToListAsync();
 
             var model = BuildGameTable(replays, true);
@@ -81,11 +77,11 @@ namespace thrucommunity.Controllers
                 .Where(r =>
                     r.SubmissionStatus == SubmissionStatuses.Approved &&
                     r.Difficulty == Difficulty.Lunatic &&
-                    r.NoBomb && r.ShotType != "Medicine" &&
-                                r.ShotType != "Aya" &&
+                    r.NoBomb &&
+                    r.ShotType != "Medicine" &&
+                    r.ShotType != "Aya" &&
                     (
                         r.NoMiss ||
-
                         (
                             r.Game == TouhouGame.PoFV &&
                             r.DeathCount == 1
@@ -128,8 +124,16 @@ namespace thrucommunity.Controllers
                     };
                 }
 
-                // LNB,LNN,ExNN
+                // GFW Extra
+                if (isExtraTable && game == TouhouGame.GFW)
+                {
+                    shotTypes = new List<string>
+                    {
+                        "Cirno"
+                    };
+                }
 
+                // LNB,LNN,ExNN
                 foreach (var shot in shotTypes)
                 {
 
@@ -148,7 +152,8 @@ namespace thrucommunity.Controllers
                                 .Select(g =>
                                 {
                                     var best = g
-                                        .OrderBy(r => r.DeathCount)
+                                        .OrderByDescending(r => r.Proven)
+                                        .ThenBy(r => r.DeathCount)
                                         .First();
 
                                     return new PlayerMiniViewModel
@@ -156,7 +161,8 @@ namespace thrucommunity.Controllers
                                         Nickname = best.Nickname,
                                         ReplayId = best.Id,
                                         DeathCount = best.DeathCount,
-                                        NoThirdCondition = best.NoThirdCondition
+                                        NoThirdCondition = best.NoThirdCondition,
+                                        Proven = best.Proven,
                                     };
                                 })
                                 .ToList();
@@ -180,15 +186,17 @@ namespace thrucommunity.Controllers
                             .Select(g =>
                             {
                                 var best = g
-                                    .OrderBy(r => r.DeathCount)
-                                    .First();
+                                        .OrderByDescending(r => r.Proven)
+                                        .ThenBy(r => r.DeathCount)
+                                        .First();
 
                                 return new PlayerMiniViewModel
                                 {
                                     Nickname = best.Nickname,
                                     ReplayId = best.Id,
                                     DeathCount = best.DeathCount,
-                                    NoThirdCondition = best.NoThirdCondition
+                                    NoThirdCondition = best.NoThirdCondition,
+                                    Proven = best.Proven,
                                 };
                             })
                             .ToList();
@@ -222,8 +230,9 @@ namespace thrucommunity.Controllers
                             .Select(g =>
                             {
                                 var best = g
-                                    .OrderBy(r => r.DeathCount)
-                                    .First();
+                                        .OrderByDescending(r => r.Proven)
+                                        .ThenBy(r => r.DeathCount)
+                                        .First();
 
 
                                 return new PlayerMiniViewModel
@@ -231,7 +240,8 @@ namespace thrucommunity.Controllers
                                     Nickname = best.Nickname,
                                     ReplayId = best.Id,
                                     DeathCount = best.DeathCount,
-                                    NoThirdCondition = best.NoThirdCondition
+                                    NoThirdCondition = best.NoThirdCondition,
+                                    Proven = best.Proven,
                                 };
 
                             })
@@ -291,6 +301,15 @@ namespace thrucommunity.Controllers
                         };
                     }
 
+                    if (game == TouhouGame.GFW &&
+                       difficulty == Difficulty.Extra)
+                    {
+                        shotTypes = new List<string>
+                        {
+                            "Cirno"
+                        };
+                    }
+
                     foreach (var shotType in shotTypes)
                     {
                         var shotVm = new ScoringShotTypeViewModel
@@ -300,7 +319,7 @@ namespace thrucommunity.Controllers
 
                         var replays = await _context.Replays
                             .Where(r =>
-                                r.Proven &&
+                                r.SubmissionStatus == SubmissionStatuses.Approved &&
                                 r.Category == RunCategory.Scoring &&
                                 r.Game == game &&
                                 r.Difficulty == difficulty &&
@@ -315,7 +334,8 @@ namespace thrucommunity.Controllers
                                 ReplayId = replay.Id,
                                 Nickname = replay.Nickname,
                                 Score = replay.Score ?? 0,
-                                ReplayDate = replay.ReplayDate ?? replay.SubmittedAtUtc
+                                ReplayDate = replay.ReplayDate ?? replay.SubmittedAtUtc,
+                                Proven = replay.Proven
                             });
                         }
 

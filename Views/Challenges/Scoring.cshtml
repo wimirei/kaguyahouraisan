@@ -37,6 +37,18 @@
 
     </div>
 
+    <div class="form-check mb-2">
+        <input class="form-check-input"
+               type="checkbox"
+               id="showUnproven"
+               @(ViewBag.ShowUnproven ? "checked" : "")
+               onchange="toggleUnproven(this)">
+
+        <label class="form-check-label" for="showUnproven">
+            Показать неподтвержденные результаты
+        </label>
+    </div>
+
     @foreach (var game in Model)
     {
         <div id="game_@game.Game"
@@ -241,5 +253,17 @@
         if(first)
             first.style.display = "block";
     };
+
+    function toggleUnproven(cb)
+    {
+        const url = new URL(window.location);
+
+        if (cb.checked)
+            url.searchParams.set("showUnproven", "true");
+        else
+            url.searchParams.delete("showUnproven");
+
+        window.location = url;
+    }
 
 </script>

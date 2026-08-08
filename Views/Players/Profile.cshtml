@@ -75,6 +75,17 @@
                 </div>
     </div>
 
+    <div class="form-check mb-3">
+        <input class="form-check-input"
+               type="checkbox"
+               id="showUnproven"
+               @(Model.ShowUnproven ? "checked" : null)>
+
+        <label class="form-check-label" for="showUnproven">
+            Показать неподтвержденные результаты
+        </label>
+    </div>
+
     <div class="card shadow-sm mb-2 best-results-card">
 
         <div class="card-header d-flex justify-content-between align-items-center">
@@ -328,44 +339,213 @@
                                             "Aya"
                                         });
                                     }
+
+                                    if (game == TouhouGame.GFW)
+                                    {
+                                        shotTypes.AddRange(new[]
+                                        {
+                                            "Cirno"
+                                        });
+                                    }
                                 }
 
-                                @foreach (var shot in shotTypes)
+                                @if (game == TouhouGame.HSiFS)
                                 {
-                                    <tr>
+                                    var groups = GameData.ShotGroups[game];
 
-                                        <td class="fw-semibold">
-                                            @shot
-                                        </td>
-
-                                        @foreach (var difficulty in GameData.Difficulties[game])
+                                    foreach (var group in groups)
+                                    {
+                                        for (int i = 0; i < group.Shots.Count; i++)
                                         {
-                                            var cell = Model.SurvivalTables[game][difficulty][shot];
+                                            var shot = group.Shots[i];
 
-                                            <td class="text-center">
+                                            <tr>
 
-                                                @if (cell.Replay != null)
+                                                <td class="fw-semibold">
+                                                    @shot
+                                                </td>
+
+                                                @foreach (var difficulty in GameData.Difficulties[game])
                                                 {
-                                                    <a asp-controller="Replay"
-                                                       asp-action="Replay"
-                                                       asp-route-id="@cell.Replay.Id"
-                                                       class="text-decoration-none">
+                                                    if (difficulty == Difficulty.Extra)
+                                                    {
+                                                        if (i == 0)
+                                                        {
+                                                            var cell = Model.SurvivalTables[game][difficulty][group.Character];
 
-                                                        <span class="badge @ReplayService.BadgeResultClass(cell.Replay)">
-                                                            @ReplayService.BuildTypeOfSurvival(cell.Replay)
-                                                        </span>
+                                                            <td rowspan="@group.Shots.Count"
+                                                                class="text-center align-middle">
 
-                                                    </a>
+                                                                @if (cell.Replay != null)
+                                                                {
+                                                                    <a asp-controller="Replay"
+                                                                       asp-action="Replay"
+                                                                       asp-route-id="@cell.Replay.Id"
+                                                                       class="text-decoration-none">
+
+                                                                        <span class="badge @ReplayService.BadgeResultClass(cell.Replay)">
+                                                                            @ReplayService.BuildTypeOfSurvival(cell.Replay)
+                                                                        </span>
+
+                                                                    </a>
+                                                                }
+                                                                else
+                                                                {
+                                                                    <span class="text-secondary">—</span>
+                                                                }
+
+                                                            </td>
+                                                        }
+                                                    }
+                                                    else
+                                                    {
+                                                        var cell = Model.SurvivalTables[game][difficulty][shot];
+
+                                                        <td class="text-center">
+
+                                                            @if (cell.Replay != null)
+                                                            {
+                                                                <a asp-controller="Replay"
+                                                                   asp-action="Replay"
+                                                                   asp-route-id="@cell.Replay.Id"
+                                                                   class="text-decoration-none">
+
+                                                                    <span class="badge @ReplayService.BadgeResultClass(cell.Replay)">
+                                                                        @ReplayService.BuildTypeOfSurvival(cell.Replay)
+                                                                    </span>
+
+                                                                </a>
+                                                            }
+                                                            else
+                                                            {
+                                                                <span class="text-secondary">—</span>
+                                                            }
+
+                                                        </td>
+                                                    }
+                                                }
+
+                                            </tr>
+                                        }
+                                    }
+                                }
+                                else if (game == TouhouGame.GFW)
+                                {
+                                    var shots = GameData.ShotTypes[game];
+
+                                    for (int i = 0; i < shots.Count; i++)
+                                    {
+                                        var shot = shots[i];
+
+                                        <tr>
+
+                                            <td class="fw-semibold">
+                                                @shot
+                                            </td>
+
+                                            @foreach (var difficulty in GameData.Difficulties[game])
+                                            {
+                                                if (difficulty == Difficulty.Extra)
+                                                {
+                                                    // Extra объединяем в одну ячейку 
+                                                    if (i == 0)
+                                                    {
+                                                        var cell = Model.SurvivalTables[game][difficulty]["Cirno"];
+
+                                                        <td rowspan="@shots.Count"
+                                                            class="text-center align-middle">
+
+                                                            @if (cell.Replay != null)
+                                                            {
+                                                                <a asp-controller="Replay"
+                                                                   asp-action="Replay"
+                                                                   asp-route-id="@cell.Replay.Id"
+                                                                   class="text-decoration-none">
+
+                                                                    <span class="badge @ReplayService.BadgeResultClass(cell.Replay)">
+                                                                        @ReplayService.BuildTypeOfSurvival(cell.Replay)
+                                                                    </span>
+
+                                                                </a>
+                                                            }
+                                                            else
+                                                            {
+                                                                <span class="text-secondary">—</span>
+                                                            }
+
+                                                        </td>
+                                                    }
                                                 }
                                                 else
                                                 {
-                                                    <span class="text-secondary">—</span>
+                                                    var cell = Model.SurvivalTables[game][difficulty][shot];
+
+                                                    <td class="text-center">
+
+                                                        @if (cell.Replay != null)
+                                                        {
+                                                            <a asp-controller="Replay"
+                                                               asp-action="Replay"
+                                                               asp-route-id="@cell.Replay.Id"
+                                                               class="text-decoration-none">
+
+                                                                <span class="badge @ReplayService.BadgeResultClass(cell.Replay)">
+                                                                    @ReplayService.BuildTypeOfSurvival(cell.Replay)
+                                                                </span>
+
+                                                            </a>
+                                                        }
+                                                        else
+                                                        {
+                                                            <span class="text-secondary">—</span>
+                                                        }
+
+                                                    </td>
                                                 }
+                                            }
 
+                                        </tr>
+                                    }
+                                }
+                                else
+                                {
+                                    @foreach (var shot in shotTypes)
+                                    {
+                                        <tr>
+
+                                            <td class="fw-semibold">
+                                                @shot
                                             </td>
-                                        }
 
-                                    </tr>
+                                            @foreach (var difficulty in GameData.Difficulties[game])
+                                            {
+                                                var cell = Model.SurvivalTables[game][difficulty][shot];
+
+                                                <td class="text-center">
+
+                                                    @if (cell.Replay != null)
+                                                    {
+                                                        <a asp-controller="Replay"
+                                                           asp-action="Replay"
+                                                           asp-route-id="@cell.Replay.Id"
+                                                           class="text-decoration-none">
+
+                                                            <span class="badge @ReplayService.BadgeResultClass(cell.Replay)">
+                                                                @ReplayService.BuildTypeOfSurvival(cell.Replay)
+                                                            </span>
+
+                                                        </a>
+                                                    }
+                                                    else
+                                                    {
+                                                        <span class="text-secondary">—</span>
+                                                    }
+
+                                                </td>
+                                            }
+
+                                        </tr>
+                                    }
                                 }
 
                             </tbody>
@@ -410,40 +590,193 @@
 
                             <tbody>
 
-                                @foreach (var shot in GameData.ShotTypes[game])
+                                @if (game == TouhouGame.HSiFS)
                                 {
-                                    <tr>
+                                    var groups = GameData.ShotGroups[game];
 
-                                        <td class="fw-semibold">
-                                            @shot
-                                        </td>
-
-                                        @foreach (var difficulty in GameData.Difficulties[game])
+                                    foreach (var group in groups)
+                                    {
+                                        for (int i = 0; i < group.Shots.Count; i++)
                                         {
-                                            var cell = Model.ScoringTables[game][difficulty][shot];
+                                            var shot = group.Shots[i];
 
-                                            <td class="text-center">
+                                            <tr>
 
-                                                @if (cell.Replay != null)
+                                                <td class="fw-semibold">
+                                                    @shot
+                                                </td>
+
+                                                @foreach (var difficulty in GameData.Difficulties[game])
                                                 {
-                                                    <a asp-controller="Replay"
-                                                       asp-action="Replay"
-                                                       asp-route-id="@cell.Replay.Id"
-                                                       class="text-decoration-none">
+                                                    if (difficulty == Difficulty.Extra)
+                                                    {
+                                                        if (i == 0)
+                                                        {
+                                                            var cell = Model.ScoringTables[game][difficulty][group.Character];
 
-                                                        @String.Format("{0:N0}", cell.Replay.Score)
+                                                            <td rowspan="@group.Shots.Count"
+                                                                class="text-center align-middle">
 
-                                                    </a>
+                                                                @if (cell.Replay != null)
+                                                                {
+                                                                    <a asp-controller="Replay"
+                                                                       asp-action="Replay"
+                                                                       asp-route-id="@cell.Replay.Id"
+                                                                       class="text-decoration-none">
+
+                                                                        @String.Format("{0:N0}", cell.Replay.Score)
+
+                                                                    </a>
+                                                                }
+                                                                else
+                                                                {
+                                                                    <span class="text-secondary">—</span>
+                                                                }
+
+                                                            </td>
+                                                        }
+                                                    }
+                                                    else
+                                                    {
+                                                        var cell = Model.ScoringTables[game][difficulty][shot];
+
+                                                        <td class="text-center">
+
+                                                            @if (cell.Replay != null)
+                                                            {
+                                                                <a asp-controller="Replay"
+                                                                   asp-action="Replay"
+                                                                   asp-route-id="@cell.Replay.Id"
+                                                                   class="text-decoration-none">
+
+                                                                    @String.Format("{0:N0}", cell.Replay.Score)
+
+                                                                </a>
+                                                            }
+                                                            else
+                                                            {
+                                                                <span class="text-secondary">—</span>
+                                                            }
+
+                                                        </td>
+                                                    }
+                                                }
+
+                                            </tr>
+                                        }
+                                    }
+                                }
+                                else if (game == TouhouGame.GFW)
+                                {
+                                    var shots = GameData.ShotTypes[game];
+
+                                    for (int i = 0; i < shots.Count; i++)
+                                    {
+                                        var shot = shots[i];
+
+                                        <tr>
+
+                                            <td class="fw-semibold">
+                                                @shot
+                                            </td>
+
+                                            @foreach (var difficulty in GameData.Difficulties[game])
+                                            {
+                                                if (difficulty == Difficulty.Extra)
+                                                {
+                                                    // Extra объединяем в одну ячейку
+                                                    if (i == 0)
+                                                    {
+                                                        var cell = Model.ScoringTables[game][difficulty]["Cirno"];
+
+                                                        <td rowspan="@shots.Count"
+                                                            class="text-center align-middle">
+
+                                                            @if (cell.Replay != null)
+                                                            {
+                                                                <a asp-controller="Replay"
+                                                                   asp-action="Replay"
+                                                                   asp-route-id="@cell.Replay.Id"
+                                                                   class="text-decoration-none">
+
+                                                                    @String.Format("{0:N0}", cell.Replay.Score)
+
+                                                                </a>
+                                                            }
+                                                            else
+                                                            {
+                                                                <span class="text-secondary">—</span>
+                                                            }
+
+                                                        </td>
+                                                    }
                                                 }
                                                 else
                                                 {
-                                                    <span class="text-secondary">—</span>
+                                                    var cell = Model.ScoringTables[game][difficulty][shot];
+
+                                                    <td class="text-center">
+
+                                                        @if (cell.Replay != null)
+                                                        {
+                                                            <a asp-controller="Replay"
+                                                               asp-action="Replay"
+                                                               asp-route-id="@cell.Replay.Id"
+                                                               class="text-decoration-none">
+
+                                                                @String.Format("{0:N0}", cell.Replay.Score)
+
+                                                            </a>
+                                                        }
+                                                        else
+                                                        {
+                                                            <span class="text-secondary">—</span>
+                                                        }
+
+                                                    </td>
                                                 }
+                                            }
 
+                                        </tr>
+                                    }
+                                }
+                                else
+                                {
+                                    @foreach (var shot in GameData.ShotTypes[game])
+                                    {
+                                        <tr>
+
+                                            <td class="fw-semibold">
+                                                @shot
                                             </td>
-                                        }
 
-                                    </tr>
+                                            @foreach (var difficulty in GameData.Difficulties[game])
+                                            {
+                                                var cell = Model.ScoringTables[game][difficulty][shot];
+
+                                                <td class="text-center">
+
+                                                    @if (cell.Replay != null)
+                                                    {
+                                                        <a asp-controller="Replay"
+                                                           asp-action="Replay"
+                                                           asp-route-id="@cell.Replay.Id"
+                                                           class="text-decoration-none">
+
+                                                            @String.Format("{0:N0}", cell.Replay.Score)
+
+                                                        </a>
+                                                    }
+                                                    else
+                                                    {
+                                                        <span class="text-secondary">—</span>
+                                                    }
+
+                                                </td>
+                                            }
+
+                                        </tr>
+                                    }
                                 }
 
                             </tbody>
@@ -627,116 +960,4 @@
     </div>
 </div>
 
-<script>
-
-    // ---------- Лучшие результаты ----------
-
-    const btnSurvival = document.getElementById("btnSurvival");
-    const btnScoring = document.getElementById("btnScoring");
-
-    const survivalTable = document.getElementById("survivalTable");
-    const scoringTable = document.getElementById("scoringTable");
-
-    btnSurvival.addEventListener("click", () => {
-
-        survivalTable.style.display = "";
-        scoringTable.style.display = "none";
-
-        btnSurvival.classList.replace("btn-outline-primary", "btn-primary");
-        btnScoring.classList.replace("btn-primary", "btn-outline-primary");
-
-    });
-
-    btnScoring.addEventListener("click", () => {
-
-        survivalTable.style.display = "none";
-        scoringTable.style.display = "";
-
-        btnScoring.classList.replace("btn-outline-primary", "btn-primary");
-        btnSurvival.classList.replace("btn-primary", "btn-outline-primary");
-
-    });
-
-
-    // ---------- Таблицы всех игр по шоттипам и сложностям ----------
-
-    let currentGame = "@TouhouGame.EoSD";
-    let currentCategory = "Survival";
-
-    const shotTables = document.querySelectorAll(".shot-table");
-    const gameButtons = document.querySelectorAll(".game-btn");
-
-    const btnShotSurvival = document.getElementById("btnShotSurvival");
-    const btnShotScoring = document.getElementById("btnShotScoring");
-
-    function updateShotTables() {
-
-        shotTables.forEach(table => {
-
-            if (table.dataset.game === currentGame &&
-                table.dataset.category === currentCategory)
-            {
-                table.style.display = "";
-            }
-            else
-            {
-                table.style.display = "none";
-            }
-
-        });
-
-    }
-
-
-    // Переключение игры
-
-    gameButtons.forEach(button => {
-
-        button.addEventListener("click", () => {
-
-            currentGame = button.dataset.game;
-
-            gameButtons.forEach(btn => {
-                btn.classList.replace("btn-primary", "btn-outline-primary");
-            });
-
-            button.classList.replace("btn-outline-primary", "btn-primary");
-
-            updateShotTables();
-
-        });
-
-    });
-
-
-    // Сурв
-
-    btnShotSurvival.addEventListener("click", () => {
-
-        currentCategory = "Survival";
-
-        btnShotSurvival.classList.replace("btn-outline-primary", "btn-primary");
-        btnShotScoring.classList.replace("btn-primary", "btn-outline-primary");
-
-        updateShotTables();
-
-    });
-
-
-    // Скоринг
-
-    btnShotScoring.addEventListener("click", () => {
-
-        currentCategory = "Scoring";
-
-        btnShotScoring.classList.replace("btn-outline-primary", "btn-primary");
-        btnShotSurvival.classList.replace("btn-primary", "btn-outline-primary");
-
-        updateShotTables();
-
-    });
-
-
-    updateShotTables();
-
-</script>
+<script src="~/js/profile.js"></script>

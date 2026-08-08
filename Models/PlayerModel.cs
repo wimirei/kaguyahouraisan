@@ -1,5 +1,4 @@
 ﻿using System.ComponentModel.DataAnnotations;
-using System.ComponentModel.DataAnnotations.Schema;
 
 namespace thrucommunity.Models
 {
@@ -18,13 +17,13 @@ namespace thrucommunity.Models
 
         public int LNNcount { get; set; }
 
-        public int LNNNcount {  get; set; }
+        public int LNNNcount { get; set; }
 
         public int LNBNxcount { get; set; }
 
         public int ExNNcount { get; set; }
 
-        public int ThirdPlaceCount{ get; set; } 
+        public int ThirdPlaceCount { get; set; }
 
         public int SecondPlaceCount { get; set; }
 
@@ -32,7 +31,7 @@ namespace thrucommunity.Models
 
         public int WRcount { get; set; }
 
-        public int survivalpoints {  get; set; }
+        public int survivalpoints { get; set; }
 
         public int scoringpoints { get; set; } = 0;
 

@@ -513,17 +513,54 @@ namespace thrucommunity.Data
             };
 
         public static readonly Dictionary<TouhouGame, List<string>> INFinals = new()
-        {       
+        {
             {
                 TouhouGame.IN,
                 new()
-                {       
+                {
                     "Final A",
                     "Final B"
                 }
             }
         };
 
+        public static readonly Dictionary<TouhouGame, List<(string Character, List<string> Shots)>> ShotGroups =
+            new()
+            {
+                [TouhouGame.HSiFS] = new()
+                {
+                    ("Reimu", new()
+                    {
+                        "Reimu Spring",
+                        "Reimu Summer",
+                        "Reimu Autumn",
+                        "Reimu Winter"
+                    }),
+                    ("Marisa", new()
+                    {
+                        "Marisa Spring",
+                        "Marisa Summer",
+                        "Marisa Autumn",
+                        "Marisa Winter"
+                    }),
+                    ("Cirno", new()
+                    {
+                        "Cirno Spring",
+                        "Cirno Summer",
+                        "Cirno Autumn",
+                        "Cirno Winter"
+                    }),
+                    ("Aya", new()
+                    {
+                        "Aya Spring",
+                        "Aya Summer",
+                        "Aya Autumn",
+                        "Aya Winter"
+                    })
+
+                }
+
+            };
 
     }
 

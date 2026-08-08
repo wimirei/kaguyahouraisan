@@ -111,7 +111,7 @@ namespace thrucommunity.Controllers
             if (model.ReplayFile == null &&
                 string.IsNullOrWhiteSpace(model.ReplayLink))
             {
-                ModelState.AddModelError("","Необходимо загрузить реплей или указать ссылку на видео.");
+                ModelState.AddModelError("", "Необходимо загрузить реплей или указать ссылку на видео.");
 
                 LoadGameData();
                 return View(model);
@@ -317,7 +317,6 @@ namespace thrucommunity.Controllers
             }
 
             //Сурв(только лунатик(пока что))
-
             int l1cc = 0;
             int lnm = 0;
             int lnb = 0;
@@ -400,7 +399,6 @@ namespace thrucommunity.Controllers
             }
 
             //Сохранение
-
             var player = await _context.Players
                 .FirstOrDefaultAsync(p => p.Nickname == nickname);
 

@@ -52,6 +52,7 @@
         </div>
 
     </div>
+
     <!-- ИКОНКИ ИГР -->
     <div class="d-flex flex-wrap gap-2 justify-content-center mb-4">
 
@@ -77,6 +78,17 @@
         }
 
     </div>
+
+    <div class="form-check mb-3">
+        <input class="form-check-input"
+               type="checkbox"
+               id="showUnproven">
+
+        <label class="form-check-label" for="showUnproven">
+            Показать неподтвержденные результаты
+        </label>
+    </div>
+
     <!-- ТАБЛИЦЫ ПО ИГРАМ -->
     @foreach (var game in Model)
     {
@@ -113,39 +125,41 @@
                                         @row.ShotType
                                     </td>
 
-                                    <td>
+                                    <td class="players-count">
                                         @row.PlayersCount
                                     </td>
 
-                                    <td>
+                                    <td class="players-cell">
 
                                         @if (row.Players.Any())
                                         {
-                                            @for (int i = 0; i < row.Players.Count; i++)
+                                            @foreach (var player in row.Players)
                                             {
-                                                var player = row.Players[i];
+                                                <span class="player-item"
+                                                      data-proven="@player.Proven.ToString().ToLower()">
 
-                                                <a asp-controller="Replay"
-                                                   asp-action="Replay"
-                                                   asp-route-id="@player.ReplayId"
-                                                   class="text-decoration-none">
+                                                    <a asp-controller="Replay"
+                                                       asp-action="Replay"
+                                                       asp-route-id="@player.ReplayId"
+                                                       class="text-decoration-none">
 
-                                                    @player.Nickname
+                                                        <span class="player-name @(player.NoThirdCondition ? "text-success fw-bold" : "") @(player.Proven ? "" : "text-danger")">
 
-                                                </a>
+                                                            @player.Nickname
 
-                                                @if (i != row.Players.Count - 1)
-                                                {
-                                                    <span>, </span>
-                                                }
+                                                        </span>
+
+                                                    </a>
+
+                                                    <span class="comma">, </span>
+
+                                                </span>
                                             }
                                         }
-                                        else
-                                        {
-                                            <span class="text-muted">
-                                                —
-                                            </span>
-                                        }
+
+                                        <span class="no-players text-muted" style="display:none;">
+                                            —
+                                        </span>
 
                                     </td>
 
@@ -259,19 +273,4 @@
 
 </div>
 
-<script>
-    function showGame(id)
-    {
-        document.querySelectorAll(".game-table")
-            .forEach(x => x.style.display = "none");
-
-        const el = document.getElementById(id);
-        if (el) el.style.display = "block";
-    }
-
-    window.onload = function ()
-    {
-        const first = document.querySelector(".game-table");
-        if (first) first.style.display = "block";
-    };
-</script>
+<script src="~/js/challenge-tables.js"></script>

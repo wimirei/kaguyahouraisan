@@ -38,6 +38,22 @@ function updateShotTypes() {
         }
     }
 
+    if (game === "GFW") {
+
+        const GFWExtraShots = [
+            "Cirno"
+        ];
+
+        if (difficulty === "Extra") {
+            availableShots = GFWExtraShots;
+        }
+        else {
+            availableShots = availableShots.filter(
+                shot => !GFWExtraShots.includes(shot)
+            );
+        }
+    }
+
 
     availableShots.forEach(
         shot => {

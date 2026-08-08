@@ -31,7 +31,7 @@ namespace thrucommunity.Controllers
 
 
         [HttpGet("{nickname}")]
-        public async Task<IActionResult> Profile(string nickname)
+        public async Task<IActionResult> Profile(string nickname, bool showUnproven = false)
         {
             var player = await _context.Players
                 .FirstOrDefaultAsync(p => p.Nickname == nickname);
@@ -41,8 +41,9 @@ namespace thrucommunity.Controllers
 
 
             var replays = await _context.Replays
-                .Where(r => r.Proven &&
-                            r.Nickname == nickname)
+                .Where(r => r.SubmissionStatus == SubmissionStatuses.Approved &&
+                (r.Proven || showUnproven) &&
+                r.Nickname == nickname)
                 .OrderByDescending(r => r.ReplayDate)
                 .ToListAsync();
 
@@ -141,6 +142,7 @@ namespace thrucommunity.Controllers
                 ScoringTables = scoringTables
             };
 
+            model.ShowUnproven = showUnproven;
 
             return View(model);
         }
@@ -186,6 +188,14 @@ namespace thrucommunity.Controllers
                             "Marisa",
                             "Cirno",
                             "Aya"
+                        });
+                    }
+
+                    if (game == TouhouGame.GFW)
+                    {
+                        shotTypes.AddRange(new[]
+                        {
+                            "Cirno"
                         });
                     }
 

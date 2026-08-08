@@ -1,7 +1,4 @@
-﻿using Microsoft.EntityFrameworkCore.Metadata.Conventions;
-using thrucommunity.Models;
-
-namespace thrucommunity.Models
+﻿namespace thrucommunity.Models
 {
     public class PlayerProfileViewModel
     {
@@ -18,5 +15,7 @@ namespace thrucommunity.Models
         public Dictionary<TouhouGame, Dictionary<Difficulty, Dictionary<string, BestResultsViewModel>>> SurvivalTables { get; set; } = new();
 
         public Dictionary<TouhouGame, Dictionary<Difficulty, Dictionary<string, BestResultsViewModel>>> ScoringTables { get; set; } = new();
+
+        public bool ShowUnproven { get; set; }
     }
 }
