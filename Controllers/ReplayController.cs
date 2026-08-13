@@ -253,7 +253,7 @@ namespace thrucommunity.Controllers
 
             }
 
-            await RecalculatePlayerStats(model.Nickname);
+            await RecalculatePlayerStats(model.Nickname);          
 
             TempData["SuccessMessage"] = "Реплей успешно отправлен и ожидает проверки модератором.";
 
@@ -323,14 +323,17 @@ namespace thrucommunity.Controllers
             int lnn = 0;
             int lnnn = 0;
             int lnbNx = 0;
-            int survivalPoints = 0;
+            //int survivalPoints = 0;
 
             var survivalReplays = all.Where(r =>
                 r.Category == RunCategory.Survival &&
                 r.Difficulty == Difficulty.Lunatic);
 
+            int survivalPoints = 0;
+
             foreach (var replay in survivalReplays)
             {
+               survivalPoints += RatingService.CalculateSurvivalPoints(replay);
                 if (string.IsNullOrWhiteSpace(replay.TypeOfSurvival))
                     continue;
 
@@ -341,7 +344,7 @@ namespace thrucommunity.Controllers
                 {
                     case "1CC":
                         l1cc++;
-                        survivalPoints += 1;
+                        //survivalPoints += 1;
                         break;
 
                     case "NM":
@@ -351,12 +354,12 @@ namespace thrucommunity.Controllers
                     case "NB":
                     case var _ when type.StartsWith("NB("):
                         lnb++;
-                        survivalPoints += 5;
+                        //survivalPoints += 5;
                         break;
 
                     case "NN":
                         lnn++;
-                        survivalPoints += 50;
+                        //survivalPoints += 50;
                         break;
 
                     default:
@@ -365,13 +368,13 @@ namespace thrucommunity.Controllers
                         if (type.StartsWith("NB"))
                         {
                             lnbNx++;
-                            survivalPoints += 5;
+                            //survivalPoints += 5;
                         }
                         //LNN+
                         else if (type.StartsWith("NN"))
                         {
                             lnnn++;
-                            survivalPoints += 50;
+                            //survivalPoints += 50;
                         }
 
                         break;
@@ -394,7 +397,7 @@ namespace thrucommunity.Controllers
                 if (type.StartsWith("NN"))
                 {
                     exnn++;
-                    survivalPoints += 2;
+                    //survivalPoints += 2;
                 }
             }
 
@@ -417,7 +420,7 @@ namespace thrucommunity.Controllers
             player.LNBNxcount = lnbNx;
             player.ExNNcount = exnn;
 
-            player.survivalpoints = survivalPoints;
+           player.survivalpoints = survivalPoints;
 
             await _context.SaveChangesAsync();
         }

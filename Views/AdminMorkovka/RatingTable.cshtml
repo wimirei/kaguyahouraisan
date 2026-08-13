@@ -1,0 +1,94 @@
+﻿@model List<thrucommunity.Services.RatingService.RatingTestResult>
+
+@{
+    ViewData["Title"] = "Тест рейтинга";
+}
+
+<div class="container mt-4">
+
+    <h1 class="text-center mb-4">
+        Тест системы рейтинга
+    </h1>
+
+    @foreach (var gameGroup in Model.GroupBy(x => x.Game))
+    {
+        <div class="card shadow-sm mb-4">
+
+            <div class="card-header fw-bold">
+                @gameGroup.Key
+            </div>
+
+            <div class="card-body">
+
+                @foreach (var difficultyGroup in gameGroup.GroupBy(x => x.Difficulty))
+                {
+                    <h5 class="mt-3">
+                        @difficultyGroup.Key
+                    </h5>
+
+                    <div class="table-responsive">
+
+                        <table class="table table-sm table-hover align-middle">
+
+                            <thead>
+                                <tr>
+                                    <th>Условия</th>
+
+                                    @for (int deaths = 0; deaths <= 9; deaths++)
+                                    {
+                                        <th class="text-center">
+                                            @deaths М
+                                        </th>
+                                    }
+                                </tr>
+                            </thead>
+
+                            <tbody>
+
+                                @foreach (var conditionGroup in difficultyGroup.GroupBy(x => x.Conditions))
+                                {
+                                    <tr>
+
+                                        <td class="fw-semibold">
+                                            @conditionGroup.Key
+                                        </td>
+
+                                        @for (int deaths = 0; deaths <= 9; deaths++)
+                                        {
+                                            var item = conditionGroup
+                                            .FirstOrDefault(x => x.DeathCount == deaths);
+
+                                            <td class="text-center">
+
+                                                @if (item != null)
+                                                {
+                                                    <strong>
+                                                        @item.Points
+                                                    </strong>
+                                                }
+                                                else
+                                                {
+                                                    <span class="text-secondary">
+                                                        —
+                                                    </span>
+                                                }
+
+                                            </td>
+                                        }
+
+                                    </tr>
+                                }
+
+                            </tbody>
+
+                        </table>
+
+                    </div>
+                }
+
+            </div>
+
+        </div>
+    }
+
+</div>

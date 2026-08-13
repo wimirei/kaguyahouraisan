@@ -414,6 +414,7 @@ namespace thrucommunity.Controllers
 
             foreach (var replay in survivalReplays)
             {
+                survivalPoints += RatingService.CalculateSurvivalPoints(replay);
                 if (string.IsNullOrWhiteSpace(replay.TypeOfSurvival))
                     continue;
 
@@ -425,7 +426,7 @@ namespace thrucommunity.Controllers
                 {
                     case "1CC":
                         l1cc++;
-                        survivalPoints += 1;
+                        //survivalPoints += 1;
                         break;
 
                     case "NM":
@@ -435,12 +436,12 @@ namespace thrucommunity.Controllers
                     case "NB":
                     case var _ when type.StartsWith("NB("):
                         lnb++;
-                        survivalPoints += 5;
+                        //survivalPoints += 5;
                         break;
 
                     case "NN":
                         lnn++;
-                        survivalPoints += 50;
+                        //survivalPoints += 50;
                         break;
 
                     default:
@@ -449,13 +450,13 @@ namespace thrucommunity.Controllers
                         if (type.StartsWith("NB"))
                         {
                             lnbNx++;
-                            survivalPoints += 5;
+                            //survivalPoints += 5;
                         }
                         //LNN+
                         else if (type.StartsWith("NN"))
                         {
                             lnnn++;
-                            survivalPoints += 50;
+                            //survivalPoints += 50;
                         }
 
                         break;
@@ -471,6 +472,7 @@ namespace thrucommunity.Controllers
 
             foreach (var replay in extraReplays)
             {
+                survivalPoints += RatingService.CalculateSurvivalPoints(replay);
                 if (string.IsNullOrWhiteSpace(replay.TypeOfSurvival))
                     continue;
 
@@ -479,7 +481,7 @@ namespace thrucommunity.Controllers
                 if (type.StartsWith("NN"))
                 {
                     exnn++;
-                    survivalPoints += 2;
+                    //survivalPoints += 2;
                 }
             }
 
@@ -604,6 +606,14 @@ namespace thrucommunity.Controllers
             await _context.SaveChangesAsync();
 
             return RedirectToAction(nameof(Players));
+        }
+
+        [HttpPost("AdminMorkovka/RatingTable")]
+        public IActionResult RatingTable()
+        {
+            var model = RatingService.GenerateRatingTest();
+
+            return View(model);
         }
     }
 }
