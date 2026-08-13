@@ -68,7 +68,7 @@ namespace thrucommunity.Services
     {
         public string? Game { get; set; }
         public string? Shot { get; set; }
-        public int? Score { get; set; }
+        public long? Score { get; set; }
         public int? Difficulty { get; set; }
         public string? Name { get; set; }
         public DateTime? Timestamp { get; set; }
@@ -85,7 +85,7 @@ namespace thrucommunity.Services
     public class ReplayStageData
     {
         public int? Stage { get; set; }
-        public int? Score { get; set; }
+        public long? Score { get; set; }
         public int? Piv { get; set; }
         public int? Graze { get; set; }
         public int? PointItems { get; set; }
