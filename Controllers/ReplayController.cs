@@ -3,6 +3,7 @@ using Microsoft.EntityFrameworkCore;
 using thrucommunity.Data;
 using thrucommunity.Models;
 using thrucommunity.Services;
+using System.Text.Json;
 
 namespace thrucommunity.Controllers
 {
@@ -11,11 +12,19 @@ namespace thrucommunity.Controllers
     {
         private readonly ApplicationDbContext _context;
         private readonly IWebHostEnvironment _environment;
+        private readonly ReplayParserService _parserService;
+        private readonly ILogger<ReplayController> _logger;
 
-        public ReplayController(ApplicationDbContext _context, IWebHostEnvironment environment)
+        public ReplayController(
+            ApplicationDbContext context,
+            IWebHostEnvironment environment,
+            ReplayParserService parserService,
+            ILogger<ReplayController> logger)
         {
-            this._context = _context;
+            _context = context;
             _environment = environment;
+            _parserService = parserService;
+            _logger = logger;
         }
 
         //Загрузка игр. сложностей. шоттипов и т.д.
@@ -192,6 +201,65 @@ namespace thrucommunity.Controllers
                         model.Game.ToString(),
                         model.ReplayFileName);
                 }
+
+                
+                try
+                {
+                    // Открываем сохраненный файл для чтения
+                    var fullPath = Path.Combine(_environment.WebRootPath, model.ReplayFilePath);
+                    
+                    using var fileStream = System.IO.File.OpenRead(fullPath);
+                    
+                    // Отправляем в микросервис
+                    var parseResult = await _parserService.ParseReplayAsync(fileStream, model.ReplayFileName);
+                    
+                    if (parseResult != null)
+                    {
+                        var jsonOptions = new JsonSerializerOptions
+                        {
+                            WriteIndented = true,
+                            PropertyNamingPolicy = JsonNamingPolicy.CamelCase
+                        };
+                        var fullJson = JsonSerializer.Serialize(parseResult, jsonOptions);
+                        _logger.LogInformation("=== ПОЛНЫЙ JSON ОТВЕТ ОТ МИКРОСЕРВИСА ===");
+                        _logger.LogInformation("{Json}", fullJson);
+                        _logger.LogInformation("=== КОНЕЦ JSON ===");
+
+                        _logger.LogInformation("=== РЕЗУЛЬТАТ ПАРСИНГА РЕПЛЕЯ ===");
+                        _logger.LogInformation("Игра: {Game}", parseResult.Game);
+                        _logger.LogInformation("Персонаж: {Shot}", parseResult.Shot);
+                        _logger.LogInformation("Счет: {Score:N0}", parseResult.Score ?? 0);
+                        _logger.LogInformation("Сложность: {Difficulty}", parseResult.Difficulty);
+                        _logger.LogInformation("Имя игрока: {Name}", parseResult.Name);
+                        _logger.LogInformation("Дата: {Timestamp}", parseResult.Timestamp);
+                        _logger.LogInformation("Замедление: {Slowdown}", parseResult.Slowdown);
+                        _logger.LogInformation("Тип: {ReplayType}", parseResult.ReplayType);
+                        _logger.LogInformation("Количество этапов: {StageCount}", parseResult.Stages?.Count ?? 0);
+                        
+                        if (parseResult.Stages != null && parseResult.Stages.Any())
+                        {
+                            _logger.LogInformation("Первый этап: очки {Score:N0}", parseResult.Stages.First().Score ?? 0);
+                            _logger.LogInformation("Последний этап: очки {Score:N0}", parseResult.Stages.Last().Score ?? 0);
+                        }
+                        
+                        _logger.LogInformation("=== КОНЕЦ РЕЗУЛЬТАТА ===");
+                        
+                        // ================================================
+                        // ПОКА НЕ СОХРАНЯЕМ В БД, ТОЛЬКО ЛОГИРУЕМ
+                        // ================================================
+                        // TODO: позже добавишь сохранение данных в модель
+                    }
+                    else
+                    {
+                        _logger.LogWarning("Не удалось распарсить реплей (сервис вернул null)");
+                    }
+                }
+                catch (Exception ex)
+                {
+                    _logger.LogError(ex, "Ошибка при вызове микросервиса парсинга");
+                    // Не прерываем загрузку — реплей все равно будет сохранен
+                }
+
 
             }
             else
