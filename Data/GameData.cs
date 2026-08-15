@@ -170,40 +170,40 @@ namespace thrucommunity.Data
 
                 [TouhouGame.HSiFS] = new()
                 {
-                    "Reimu Spring",
-                    "Reimu Summer",
-                    "Reimu Winter",
-                    "Reimu Autumn",
+                    "ReimuSpring",
+                    "ReimuSummer",
+                    "ReimuWinter",
+                    "ReimuAutumn",
 
-                    "Marisa Spring",
-                    "Marisa Summer",
-                    "Marisa Winter",
-                    "Marisa Autumn",
+                    "MarisaSpring",
+                    "MarisaSummer",
+                    "MarisaWinter",
+                    "MarisaAutumn",
 
-                    "Cirno Spring",
-                    "Cirno Summer",
-                    "Cirno Winter",
-                    "Cirno Autumn",
+                    "CirnoSpring",
+                    "CirnoSummer",
+                    "CirnoWinter",
+                    "CirnoAutumn",
 
-                    "Aya Spring",
-                    "Aya Summer",
-                    "Aya Winter",
-                    "Aya Autumn"
+                    "AyaSpring",
+                    "AyaSummer",
+                    "AyaWinter",
+                    "AyaAutumn"
                 },
 
                 [TouhouGame.WBaWC] = new()
                 {
-                    "Reimu Wolf",
-                    "Reimu Otter",
-                    "Reimu Eagle",
+                    "ReimuWolf",
+                    "ReimuOtter",
+                    "ReimuEagle",
 
-                    "Marisa Wolf",
-                    "Marisa Otter",
-                    "Marisa Eagle",
+                    "MarisaWolf",
+                    "MarisaOtter",
+                    "MarisaEagle",
 
-                    "Youmu Wolf",
-                    "Youmu Otter",
-                    "Youmu Eagle"
+                    "YoumuWolf",
+                    "YoumuOtter",
+                    "YoumuEagle"
                 },
 
                 [TouhouGame.UM] = new()
@@ -239,23 +239,23 @@ namespace thrucommunity.Data
 
                 [TouhouGame.FW] = new()
                 {
-                    "Reimu R1",
-                    "Reimu R2",
-                    "Reimu B1",
-                    "Reimu B2",
-                    "Reimu Y1",
-                    "Reimu Y2",
-                    "Reimu G1",
-                    "Reimu G2",
+                    "ReimuR1",
+                    "ReimuR2",
+                    "ReimuB1",
+                    "ReimuB2",
+                    "ReimuY1",
+                    "ReimuY2",
+                    "ReimuG1",
+                    "ReimuG2",
 
-                    "Marisa R1",
-                    "Marisa R2",
-                    "Marisa B1",
-                    "Marisa B2",
-                    "Marisa Y1",
-                    "Marisa Y2",
-                    "Marisa G1",
-                    "Marisa G2"
+                    "MarisaR1",
+                    "MarisaR2",
+                    "MarisaB1",
+                    "MarisaB2",
+                    "MarisaY1",
+                    "MarisaY2",
+                    "MarisaG1",
+                    "MarisaG2"
                 }
             };
         public static readonly Dictionary<TouhouGame, List<Difficulty>> Difficulties =
@@ -531,31 +531,31 @@ namespace thrucommunity.Data
                 {
                     ("Reimu", new()
                     {
-                        "Reimu Spring",
-                        "Reimu Summer",
-                        "Reimu Autumn",
-                        "Reimu Winter"
+                        "ReimuSpring",
+                        "ReimuSummer",
+                        "ReimuAutumn",
+                        "ReimuWinter"
                     }),
                     ("Marisa", new()
                     {
-                        "Marisa Spring",
-                        "Marisa Summer",
-                        "Marisa Autumn",
-                        "Marisa Winter"
+                        "MarisaSpring",
+                        "MarisaSummer",
+                        "MarisaAutumn",
+                        "MarisaWinter"
                     }),
                     ("Cirno", new()
                     {
-                        "Cirno Spring",
-                        "Cirno Summer",
-                        "Cirno Autumn",
-                        "Cirno Winter"
+                        "CirnoSpring",
+                        "CirnoSummer",
+                        "CirnoAutumn",
+                        "CirnoWinter"
                     }),
                     ("Aya", new()
                     {
-                        "Aya Spring",
-                        "Aya Summer",
-                        "Aya Autumn",
-                        "Aya Winter"
+                        "AyaSpring",
+                        "AyaSummer",
+                        "AyaAutumn",
+                        "AyaWinter"
                     })
 
                 }

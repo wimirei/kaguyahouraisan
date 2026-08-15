@@ -3,7 +3,6 @@ using Microsoft.EntityFrameworkCore;
 using thrucommunity.Data;
 using thrucommunity.Models;
 using thrucommunity.Services;
-using System.Text.Json;
 
 namespace thrucommunity.Controllers
 {
@@ -98,11 +97,94 @@ namespace thrucommunity.Controllers
             return View(replay);
         }
 
+
         [HttpGet("Replay/Upload")]
         public IActionResult Create()
         {
             LoadGameData();
             return View();
+        }
+
+        [HttpPost("Replay/Parse")]
+        public async Task<IActionResult> ParseReplay(IFormFile file)
+        {
+            if (file == null || file.Length == 0)
+            {
+                return BadRequest(new
+                {
+                    success = false,
+                    message = "Файл не выбран."
+                });
+            }
+
+            const long MaxReplaySize = 200 * 1024;
+
+            if (file.Length > MaxReplaySize)
+            {
+                return BadRequest(new
+                {
+                    success = false,
+                    message = "Размер файла реплея не должен превышать 200 КБ."
+                });
+            }
+
+            string extension = Path.GetExtension(file.FileName)
+                .ToLowerInvariant();
+
+            if (extension != ".rpy")
+            {
+                return BadRequest(new
+                {
+                    success = false,
+                    message = "Можно загружать только файлы реплеев (.rpy)."
+                });
+            }
+
+            try
+            {
+                using var stream = file.OpenReadStream();
+
+                var parseResult = await _parserService.ParseReplayAsync(
+                    stream,
+                    file.FileName);
+
+                if (parseResult == null)
+                {
+                    return BadRequest(new
+                    {
+                        success = false,
+                        message = "Не удалось распарсить реплей."
+                    });
+                }
+
+                return Json(new
+                {
+                    success = true,
+
+                    game = parseResult.Game,
+                    shot = parseResult.Shot,
+                    difficulty = parseResult.Difficulty,
+
+                    score = parseResult.Score,
+                    route = parseResult.Route,
+
+                    name = parseResult.Name,
+                    timestamp = parseResult.Timestamp,
+
+                    slowdown = parseResult.Slowdown,
+                    replayType = parseResult.ReplayType
+                });
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, "Ошибка при предварительном парсинге реплея");
+
+                return StatusCode(500, new
+                {
+                    success = false,
+                    message = "Произошла ошибка при обработке реплея."
+                });
+            }
         }
 
         [HttpPost("Replay/Upload")]
@@ -153,6 +235,7 @@ namespace thrucommunity.Controllers
                         LoadGameData();
                         return View(model);
                     }
+
                     //Конвертазия реплеев в пользовательский формат
                     // thXX_
                     string originalName = Path.GetFileNameWithoutExtension(model.ReplayFile.FileName);
@@ -202,65 +285,6 @@ namespace thrucommunity.Controllers
                         model.ReplayFileName);
                 }
 
-                
-                try
-                {
-                    // Открываем сохраненный файл для чтения
-                    var fullPath = Path.Combine(_environment.WebRootPath, model.ReplayFilePath);
-                    
-                    using var fileStream = System.IO.File.OpenRead(fullPath);
-                    
-                    // Отправляем в микросервис
-                    var parseResult = await _parserService.ParseReplayAsync(fileStream, model.ReplayFileName);
-                    
-                    if (parseResult != null)
-                    {
-                        var jsonOptions = new JsonSerializerOptions
-                        {
-                            WriteIndented = true,
-                            PropertyNamingPolicy = JsonNamingPolicy.CamelCase
-                        };
-                        var fullJson = JsonSerializer.Serialize(parseResult, jsonOptions);
-                        _logger.LogInformation("=== ПОЛНЫЙ JSON ОТВЕТ ОТ МИКРОСЕРВИСА ===");
-                        _logger.LogInformation("{Json}", fullJson);
-                        _logger.LogInformation("=== КОНЕЦ JSON ===");
-
-                        _logger.LogInformation("=== РЕЗУЛЬТАТ ПАРСИНГА РЕПЛЕЯ ===");
-                        _logger.LogInformation("Игра: {Game}", parseResult.Game);
-                        _logger.LogInformation("Персонаж: {Shot}", parseResult.Shot);
-                        _logger.LogInformation("Счет: {Score:N0}", parseResult.Score ?? 0);
-                        _logger.LogInformation("Сложность: {Difficulty}", parseResult.Difficulty);
-                        _logger.LogInformation("Имя игрока: {Name}", parseResult.Name);
-                        _logger.LogInformation("Дата: {Timestamp}", parseResult.Timestamp);
-                        _logger.LogInformation("Замедление: {Slowdown}", parseResult.Slowdown);
-                        _logger.LogInformation("Тип: {ReplayType}", parseResult.ReplayType);
-                        _logger.LogInformation("Количество этапов: {StageCount}", parseResult.Stages?.Count ?? 0);
-                        
-                        if (parseResult.Stages != null && parseResult.Stages.Any())
-                        {
-                            _logger.LogInformation("Первый этап: очки {Score:N0}", parseResult.Stages.First().Score ?? 0);
-                            _logger.LogInformation("Последний этап: очки {Score:N0}", parseResult.Stages.Last().Score ?? 0);
-                        }
-                        
-                        _logger.LogInformation("=== КОНЕЦ РЕЗУЛЬТАТА ===");
-                        
-                        // ================================================
-                        // ПОКА НЕ СОХРАНЯЕМ В БД, ТОЛЬКО ЛОГИРУЕМ
-                        // ================================================
-                        // TODO: позже добавишь сохранение данных в модель
-                    }
-                    else
-                    {
-                        _logger.LogWarning("Не удалось распарсить реплей (сервис вернул null)");
-                    }
-                }
-                catch (Exception ex)
-                {
-                    _logger.LogError(ex, "Ошибка при вызове микросервиса парсинга");
-                    // Не прерываем загрузку — реплей все равно будет сохранен
-                }
-
-
             }
             else
 
@@ -268,27 +292,12 @@ namespace thrucommunity.Controllers
             {
                 model.DeathCount = 0;
             }
-            if (model.Score == null)
-            {
-                model.Score = 0;
-            }
-
-            if (model.ReplayDate == default)
-            {
-                model.ReplayDate = DateTime.UtcNow;
-            }
-
-            if (model.ReplayDate != default)
-            {
-                model.ReplayDate =
-                    DateTime.SpecifyKind(
-                        model.ReplayDate.Value,
-                        DateTimeKind.Utc);
-            }
 
             if (model.Game != TouhouGame.IN) { model.INFinal = null; }
 
             if (model.Difficulty == Difficulty.Extra) { model.INFinal = null; }
+
+            model.ReplayDate = DateTime.SpecifyKind(model.ReplayDate.Value, DateTimeKind.Utc);
 
             model.Proven = false;
 
@@ -304,24 +313,7 @@ namespace thrucommunity.Controllers
 
             await _context.SaveChangesAsync();
 
-            if (model.Category == RunCategory.Scoring)
-            {
-                var sameGroup = await _context.Replays
-                    .Where(r =>
-                        r.Proven &&
-                        r.Category == RunCategory.Scoring &&
-                        r.Game == model.Game &&
-                        r.Difficulty == model.Difficulty &&
-                        r.ShotType == model.ShotType)
-                    .ToListAsync();
-
-                var ordered = sameGroup
-                    .OrderByDescending(r => r.Score)
-                    .ToList();
-
-            }
-
-            await RecalculatePlayerStats(model.Nickname);          
+            await RecalculatePlayerStats(model.Nickname);
 
             TempData["SuccessMessage"] = "Реплей успешно отправлен и ожидает проверки модератором.";
 
@@ -401,7 +393,7 @@ namespace thrucommunity.Controllers
 
             foreach (var replay in survivalReplays)
             {
-               survivalPoints += RatingService.CalculateSurvivalPoints(replay);
+                survivalPoints += RatingService.CalculateSurvivalPoints(replay);
                 if (string.IsNullOrWhiteSpace(replay.TypeOfSurvival))
                     continue;
 
@@ -412,7 +404,6 @@ namespace thrucommunity.Controllers
                 {
                     case "1CC":
                         l1cc++;
-                        //survivalPoints += 1;
                         break;
 
                     case "NM":
@@ -422,12 +413,10 @@ namespace thrucommunity.Controllers
                     case "NB":
                     case var _ when type.StartsWith("NB("):
                         lnb++;
-                        //survivalPoints += 5;
                         break;
 
                     case "NN":
                         lnn++;
-                        //survivalPoints += 50;
                         break;
 
                     default:
@@ -436,13 +425,11 @@ namespace thrucommunity.Controllers
                         if (type.StartsWith("NB"))
                         {
                             lnbNx++;
-                            //survivalPoints += 5;
                         }
                         //LNN+
                         else if (type.StartsWith("NN"))
                         {
                             lnnn++;
-                            //survivalPoints += 50;
                         }
 
                         break;
@@ -488,7 +475,7 @@ namespace thrucommunity.Controllers
             player.LNBNxcount = lnbNx;
             player.ExNNcount = exnn;
 
-           player.survivalpoints = survivalPoints;
+            player.survivalpoints = survivalPoints;
 
             await _context.SaveChangesAsync();
         }
