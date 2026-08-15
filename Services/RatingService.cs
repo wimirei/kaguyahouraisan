@@ -29,7 +29,7 @@ namespace thrucommunity.Services
             { TouhouGame.EoSD, 50 },
             { TouhouGame.PCB, 30 },
             { TouhouGame.IN, 30 },
-            { TouhouGame.PoFV, 30 },
+            { TouhouGame.PoFV, 5 },
             { TouhouGame.MoF, 30 },
             { TouhouGame.SA, 70 },
             { TouhouGame.UFO, 100 },
@@ -38,79 +38,76 @@ namespace thrucommunity.Services
             { TouhouGame.DDC, 70 },
             { TouhouGame.LoLK, 70 },
             { TouhouGame.HSiFS, 70 },
-            { TouhouGame.WBaWC, 50 },
+            { TouhouGame.WBaWC, 30 },
             { TouhouGame.UM, 50 },
-            { TouhouGame.UDoALG, 30 },
+            { TouhouGame.UDoALG, 1 },
             { TouhouGame.FW, 70 }
         };
 
         // Коэффициент сложности
         private static readonly Dictionary<Difficulty, double> DifficultyMultiplier = new()
         {
-            { Difficulty.Easy, 0.1 },
-            { Difficulty.Normal, 0.25 },
-            { Difficulty.Hard, 0.4 },
-            { Difficulty.Lunatic, 1.1 },
-            { Difficulty.Extra, 0.85 },
-            { Difficulty.Phantasm, 0.85 }
+            { Difficulty.Easy, 0.10 },
+            { Difficulty.Normal, 0.15 },
+            { Difficulty.Hard, 0.30 },
+            { Difficulty.Lunatic, 3.60 },
+            { Difficulty.Extra, 0.45 },
+            { Difficulty.Phantasm, 0.45 }
         };
-      
+
 
         // Бонус за No Bomb для каждой игры
         private static readonly Dictionary<TouhouGame, double> NoBombBonus = new()
         {
-            { TouhouGame.HRtP, 1.8 },
-            { TouhouGame.SoEW, 1.4 },
-            { TouhouGame.PoDD, 1.8 },
-            { TouhouGame.LLS, 1.2 },
-            { TouhouGame.MS, 1.4 },
-            { TouhouGame.EoSD, 1.7 },
-            { TouhouGame.PCB, 1.2 },
-            { TouhouGame.IN, 1.4 },
-            { TouhouGame.PoFV, 1.2 },
-            { TouhouGame.MoF, 1.6 },
-            { TouhouGame.SA, 1.6 },
-            { TouhouGame.UFO, 1.8 },
-            { TouhouGame.GFW, 1.6 },
-            { TouhouGame.TD, 1.4 },
-            { TouhouGame.DDC, 1.6 },
-            { TouhouGame.LoLK, 1.8 },
-            { TouhouGame.HSiFS, 1.2 },
-            { TouhouGame.WBaWC, 1.2 },
-            { TouhouGame.UM, 1.2 },
-            { TouhouGame.UDoALG, 1.2 },
-            { TouhouGame.FW, 1.6 }
+            { TouhouGame.UFO, 12.80 },
+            { TouhouGame.PoDD, 12.75 },
+            { TouhouGame.FW, 13.00 },
+            { TouhouGame.HRtP, 12.85 },
+            { TouhouGame.LoLK, 12.70 },
+            { TouhouGame.UM, 11.56 },
+            { TouhouGame.EoSD, 12.80 },
+            { TouhouGame.DDC, 11.90 },
+            { TouhouGame.HSiFS, 11.80 },
+            { TouhouGame.SA, 11.70 },
+            { TouhouGame.IN, 12.40 },
+            { TouhouGame.TD, 11.80 },
+            { TouhouGame.MoF, 12.30 },
+            { TouhouGame.GFW, 11.00 },
+            { TouhouGame.SoEW, 12.00 },
+            { TouhouGame.MS, 11.35 },
+            { TouhouGame.LLS, 11.80 },
+            { TouhouGame.PCB, 11.60 },
+            { TouhouGame.WBaWC, 11.40 },
+            { TouhouGame.PoFV, 11.30 },
+            { TouhouGame.UDoALG, 11.20 }
         };
 
         // Бонус за третье условие для каждой игры
         private static readonly Dictionary<TouhouGame, double> ThirdConditionBonus = new()
         {
-            { TouhouGame.EoSD, 30 },
             { TouhouGame.PCB, 35 },
             { TouhouGame.IN, 35 },
-            { TouhouGame.MoF, 40 },
-            { TouhouGame.SA, 40 },
             { TouhouGame.UFO, 40 },
-            { TouhouGame.GFW, 45 },
-            { TouhouGame.HSiFS, 45 },
-            { TouhouGame.WBaWC, 50 },
-            { TouhouGame.UM, 50 },
+            { TouhouGame.TD, 40 },
+            { TouhouGame.HSiFS, 40 },
+            { TouhouGame.WBaWC, 40 },
+            { TouhouGame.UM, 300 },
             { TouhouGame.FW, 55 }
         };
 
         // Коэффициент за количество смертей
         private static readonly Dictionary<int, double> DeathMultiplier = new()
         {
-            { 0, 2.00 },
-            { 1, 1.50 },
-            { 2, 1.20 },
-            { 3, 1.0 },
-            { 4, 0.80 },
-            { 5, 0.60 },
-            { 6, 0.40 },
-            { 7, 0.20 },
-            { 8, 0.10 },
-            { 9, 0.05 },
+            { 0, 12.3 },
+            { 1, 1.90 },
+            { 2, 1.80 },
+            { 3, 1.70 },
+            { 4, 1.40 },
+            { 5, 1.30 },
+            { 6, 1.10 },
+            { 7, 1.10 },
+            { 8, 1.05 },
+            { 9, 1.05 },
 
          };
 
@@ -151,8 +148,8 @@ namespace thrucommunity.Services
             int deaths = 0;
 
             // Смерти
-           
-            
+
+
             if (replay.DeathCount != null)
             {
                 deaths = replay.DeathCount ?? 0;
@@ -160,24 +157,22 @@ namespace thrucommunity.Services
             else
             {
                 deaths = 9;
-            } 
+            }
 
             if (DeathMultiplier.TryGetValue(
-                     deaths,
-                     out var deathMultiplier))
-             { 
-                 points *= deathMultiplier;
-             }
-             else
-             {
-                 // Для большого количества смертей
-                 points *= Math.Max(
-                     0.1,
-                     1.0 - deaths * 0.1
-                 );
-             }
-
-            //points += (deaths * 0.8);
+                      deaths,
+                      out var deathMultiplier))
+            {
+                points *= deathMultiplier;
+            }
+            else
+            {
+                // Для большого количества смертей
+                points *= Math.Max(
+                    0.1,
+                    1.0 - deaths * 0.1
+                );
+            }
 
             return (int)Math.Round(points);
 
@@ -202,7 +197,7 @@ namespace thrucommunity.Services
                             deaths,
                             noBomb: false,
                             noThirdCondition: false,
-                            "Обычный"
+                            "1cc"
                         ));
                     }
 

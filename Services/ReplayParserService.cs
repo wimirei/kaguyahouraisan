@@ -1,5 +1,4 @@
 using System.Text.Json;
-using System.Text;
 
 namespace thrucommunity.Services
 {
@@ -16,7 +15,7 @@ namespace thrucommunity.Services
         {
             _httpClient = httpClient;
             _logger = logger;
-            _parserUrl = configuration["ReplayParser:Url"] ?? "http://localhost:5000";
+            _parserUrl = configuration["ReplayParser:Url"] ?? "http://localhost:5001";
         }
 
         public async Task<ReplayParseResult?> ParseReplayAsync(Stream fileStream, string fileName)
