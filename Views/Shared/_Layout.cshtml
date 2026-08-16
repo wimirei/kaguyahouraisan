@@ -3,11 +3,13 @@
 <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <meta name="description" content="Сайт посвящён серии игр Touhou Project и ориентирован на русскоязычное сообщество. Здесь вы найдётетаблицы базу реплеев,полезные материалы, руководства и другую информацию по играм серии." />
+    <meta name="description" content="@ViewData["Description"]" />
 
     <meta name="keywords" content="Touhou, Touhou Project, leaderboard, high scores, replays, rankings, achievements, тохо, тоухоу, реплеи, повторы, тохо проект, восточный проект, тохо лунатик, тохо сообщество, тохо фд, лунатик, нормал, лиддерборды, таблица лиддеров, рекорды, скоринг, сурвайвол" />
 
     <meta name="author" content="Kaguya Houraisan" />
+
+    <link rel="canonical" href="@(ViewData["Canonical"] ?? $"https://kaguyahouraisan.com{Context.Request.Path}")" />
 
     <title>@ViewData["Title"] - Kaguya Houraisan</title>
     <script type="importmap"></script>
@@ -38,7 +40,7 @@
                         <li class="nav-item">
                             <div class="dropdown">
                             <button class="btn btn-replay dropdown-toggle" type="button" id="dropdownMenuButton1" data-bs-toggle="dropdown" aria-expanded="false">
-                                Таблицы
+                                Рекорды
                             </button>
                             <ul class="dropdown-menu" aria-labelledby="dropdownMenuButton1">
                                 <a class="nav-link" asp-area="" asp-controller="Challenges" asp-action="LNB">Lunatic No Bomb</a>

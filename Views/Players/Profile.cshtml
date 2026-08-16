@@ -4,7 +4,10 @@
 @using thrucommunity.Data
 
 @{
-    ViewData["Title"] = Model.Player.Nickname;
+    ViewData["Title"] = $"Профиль игрока — {Model.Player.Nickname}";
+    ViewData["Description"] = $"L1CC: — {Model.Player.L1CCcount} LNB: — {Model.Player.LNBcount + Model.Player.LNBNxcount} LNN: — {Model.Player.LNNcount + Model.Player.LNNNcount}";
+    ViewData["Canonical"] = $"https://kaguyahouraisan.com/Players/{Model.Player.Nickname}";
+
 }
 
 <div class="container mt-4" style="max-width: 1000px;">
