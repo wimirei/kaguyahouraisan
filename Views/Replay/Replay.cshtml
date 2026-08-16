@@ -3,7 +3,9 @@
 @using thrucommunity.Services
 
 @{
-    ViewData["Title"] = "Replay";
+    ViewData["Title"] = $"Реплей игрока — {Model.Nickname}";
+    ViewData["Description"] = "Реплеи (повторы) игроков.";
+    ViewData["Canonical"] = $"https://kaguyahouraisan.com/Replays/Replay/{Model.Id}";
 }
 
 <div class="container mt-4">

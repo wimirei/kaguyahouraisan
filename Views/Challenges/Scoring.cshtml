@@ -3,6 +3,7 @@
 
 @{
     ViewData["Title"] = "Cкоринг";
+    ViewData["Description"] = "Таблица рекордов по очкам в Touhou Project.";
 }
 
 <div class="container mt-4" style="max-width: 1100px;">
@@ -37,12 +38,10 @@
 
     </div>
 
-    <div class="form-check mb-2">
+    <div class="form-check mb-3">
         <input class="form-check-input"
                type="checkbox"
-               id="showUnproven"
-               @(ViewBag.ShowUnproven ? "checked" : "")
-               onchange="toggleUnproven(this)">
+               id="showUnproven">
 
         <label class="form-check-label" for="showUnproven">
             Показать неподтвержденные результаты
@@ -254,16 +253,6 @@
             first.style.display = "block";
     };
 
-    function toggleUnproven(cb)
-    {
-        const url = new URL(window.location);
-
-        if (cb.checked)
-            url.searchParams.set("showUnproven", "true");
-        else
-            url.searchParams.delete("showUnproven");
-
-        window.location = url;
-    }
-
 </script>
+
+<script src="~/js/challenge-tables.js"></script>

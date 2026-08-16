@@ -297,7 +297,10 @@ namespace thrucommunity.Controllers
 
             if (model.Difficulty == Difficulty.Extra) { model.INFinal = null; }
 
-            model.ReplayDate = DateTime.SpecifyKind(model.ReplayDate.Value, DateTimeKind.Utc);
+            if(model.ReplayFile != null)
+            {
+                model.ReplayDate = DateTime.SpecifyKind(model.ReplayDate.Value, DateTimeKind.Utc);
+            }            
 
             model.Proven = false;
 
