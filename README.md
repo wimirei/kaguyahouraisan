@@ -36,6 +36,8 @@ Console.ReadKey();
 ```
 "AdminPasswordHash": "Вставить полученный хеш.",
 ```
+Сайт использует микросервис th-replay-parser
+https://github.com/SarodipDiraka/th-replay-parser
 
  Copyright (c) 2026 wimirei
  https://kaguyahouraisan.com
