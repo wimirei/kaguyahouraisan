@@ -3,7 +3,8 @@
 @using System.Text.Json
 
 @{
-    ViewData["Title"] = "Загрузить реплей";
+    ViewData["Title"] = "Загрузка реплея";
+    ViewData["Description"] = "Загрузка реплея(повтора) из серии игр Touhou Project на сайт.";
 }
 
 <div class="container mt-4">
@@ -26,23 +27,22 @@
 
     <div class="text-center mb-4">
         <p class="mb-1">Вы можете загрузить файл реплея или оставить ссылку на видео.</p>
+         <p class="mb-1">Загрузив реплей, форма автоматически заполнится.</p>
         <p class="mb-0">После отправки реплей будет проверен модератором и, после одобрения, опубликован на сайте.</p>
     </div>
+        <p class="mb-2">
+            Реплей может быть отклонён по следующим причинам:
+         </p>
 
-                        <p class="mb-2">
-                            Реплей может быть отклонён по следующим причинам:
-                        </p>
-
-                        <ul class="mb-3 ps-3">
-                            <li><strong>Жульничество: </strong>Использование сейв стейтов, монтаж, пауз баферринг и др.</li>
-                            <li><strong>Чужой реплей: </strong>Выдача чужого реплея за свой запрещена.</li>
-                            <li><strong>Графическое изменение игры: </strong>Модификация любых графических элементов игры запрещена.</li>
-                        </ul>
+        <ul class="mb-3 ps-3">
+            <li><strong>Жульничество: </strong>Использование сейв стейтов, монтаж, пауз баферринг и др.</li>
+            <li><strong>Чужой реплей: </strong>Выдача чужого реплея за свой запрещена.</li>
+            <li><strong>Графическое изменение игры: </strong>Модификация любых графических элементов игры запрещена.</li>
+         </ul>
 
     <div class="mb-3">
         <label asp-for="Nickname">Игрок</label>
-        <input asp-for="Nickname"
-               class="form-control" />
+        <input asp-for="Nickname" class="form-control" />
     </div>
 
      <div class="mb-3">
@@ -121,9 +121,8 @@
 
     <div id="Score">
         <label asp-for="Score">Очки</label>
-        <input asp-for="Score" class="form-control"/>
+        <input asp-for="Score" class="form-control" id="scoreSelect"/>
     </div>
-
                         <div class="form-check">
                             <input asp-for="NoMiss"
                                    class="form-check-input"
@@ -168,12 +167,14 @@
                             </label>
                         </div>
     <hr />
-    <div class="mb-3">
-        <label asp-for="ReplayFile">Файл реплея</label>
+    <div class="mb-3">     
 
         <input asp-for="ReplayFile"
-               type="file"
-               class="form-control" />
+                        type="file"
+                        accept=".rpy"
+                        id="replayFile"/>
+
+        <p id="parsingProcess"></p>
 
         <input asp-for="ReplayDate"
                type="hidden"
@@ -216,5 +217,6 @@
 
         const fourthConditionGames = @Html.Raw(JsonSerializer.Serialize(ViewBag.FourthConditionGames));
     </script>
+    <script src="~/js/parse-replay.js"></script>
     <script src="~/js/replay-upload.js"></script>
 }

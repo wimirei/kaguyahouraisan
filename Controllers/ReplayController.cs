@@ -11,11 +11,19 @@ namespace thrucommunity.Controllers
     {
         private readonly ApplicationDbContext _context;
         private readonly IWebHostEnvironment _environment;
+        private readonly ReplayParserService _parserService;
+        private readonly ILogger<ReplayController> _logger;
 
-        public ReplayController(ApplicationDbContext _context, IWebHostEnvironment environment)
+        public ReplayController(
+            ApplicationDbContext context,
+            IWebHostEnvironment environment,
+            ReplayParserService parserService,
+            ILogger<ReplayController> logger)
         {
-            this._context = _context;
+            _context = context;
             _environment = environment;
+            _parserService = parserService;
+            _logger = logger;
         }
 
         //Загрузка игр. сложностей. шоттипов и т.д.
@@ -89,11 +97,94 @@ namespace thrucommunity.Controllers
             return View(replay);
         }
 
+
         [HttpGet("Replay/Upload")]
         public IActionResult Create()
         {
             LoadGameData();
             return View();
+        }
+
+        [HttpPost("Replay/Parse")]
+        public async Task<IActionResult> ParseReplay(IFormFile file)
+        {
+            if (file == null || file.Length == 0)
+            {
+                return BadRequest(new
+                {
+                    success = false,
+                    message = "Файл не выбран."
+                });
+            }
+
+            const long MaxReplaySize = 200 * 1024;
+
+            if (file.Length > MaxReplaySize)
+            {
+                return BadRequest(new
+                {
+                    success = false,
+                    message = "Размер файла реплея не должен превышать 200 КБ."
+                });
+            }
+
+            string extension = Path.GetExtension(file.FileName)
+                .ToLowerInvariant();
+
+            if (extension != ".rpy")
+            {
+                return BadRequest(new
+                {
+                    success = false,
+                    message = "Можно загружать только файлы реплеев (.rpy)."
+                });
+            }
+
+            try
+            {
+                using var stream = file.OpenReadStream();
+
+                var parseResult = await _parserService.ParseReplayAsync(
+                    stream,
+                    file.FileName);
+
+                if (parseResult == null)
+                {
+                    return BadRequest(new
+                    {
+                        success = false,
+                        message = "Не удалось распарсить реплей."
+                    });
+                }
+
+                return Json(new
+                {
+                    success = true,
+
+                    game = parseResult.Game,
+                    shot = parseResult.Shot,
+                    difficulty = parseResult.Difficulty,
+
+                    score = parseResult.Score,
+                    route = parseResult.Route,
+
+                    name = parseResult.Name,
+                    timestamp = parseResult.Timestamp,
+
+                    slowdown = parseResult.Slowdown,
+                    replayType = parseResult.ReplayType
+                });
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, "Ошибка при предварительном парсинге реплея");
+
+                return StatusCode(500, new
+                {
+                    success = false,
+                    message = "Произошла ошибка при обработке реплея."
+                });
+            }
         }
 
         [HttpPost("Replay/Upload")]
@@ -144,6 +235,7 @@ namespace thrucommunity.Controllers
                         LoadGameData();
                         return View(model);
                     }
+
                     //Конвертазия реплеев в пользовательский формат
                     // thXX_
                     string originalName = Path.GetFileNameWithoutExtension(model.ReplayFile.FileName);
@@ -200,27 +292,15 @@ namespace thrucommunity.Controllers
             {
                 model.DeathCount = 0;
             }
-            if (model.Score == null)
-            {
-                model.Score = 0;
-            }
-
-            if (model.ReplayDate == default)
-            {
-                model.ReplayDate = DateTime.UtcNow;
-            }
-
-            if (model.ReplayDate != default)
-            {
-                model.ReplayDate =
-                    DateTime.SpecifyKind(
-                        model.ReplayDate.Value,
-                        DateTimeKind.Utc);
-            }
 
             if (model.Game != TouhouGame.IN) { model.INFinal = null; }
 
             if (model.Difficulty == Difficulty.Extra) { model.INFinal = null; }
+
+            if(model.ReplayFile != null)
+            {
+                model.ReplayDate = DateTime.SpecifyKind(model.ReplayDate.Value, DateTimeKind.Utc);
+            }            
 
             model.Proven = false;
 
@@ -235,23 +315,6 @@ namespace thrucommunity.Controllers
             _context.Replays.Add(model);
 
             await _context.SaveChangesAsync();
-
-            if (model.Category == RunCategory.Scoring)
-            {
-                var sameGroup = await _context.Replays
-                    .Where(r =>
-                        r.Proven &&
-                        r.Category == RunCategory.Scoring &&
-                        r.Game == model.Game &&
-                        r.Difficulty == model.Difficulty &&
-                        r.ShotType == model.ShotType)
-                    .ToListAsync();
-
-                var ordered = sameGroup
-                    .OrderByDescending(r => r.Score)
-                    .ToList();
-
-            }
 
             await RecalculatePlayerStats(model.Nickname);
 
@@ -323,14 +386,17 @@ namespace thrucommunity.Controllers
             int lnn = 0;
             int lnnn = 0;
             int lnbNx = 0;
-            int survivalPoints = 0;
+            //int survivalPoints = 0;
 
             var survivalReplays = all.Where(r =>
                 r.Category == RunCategory.Survival &&
                 r.Difficulty == Difficulty.Lunatic);
 
+            int survivalPoints = 0;
+
             foreach (var replay in survivalReplays)
             {
+                survivalPoints += RatingService.CalculateSurvivalPoints(replay);
                 if (string.IsNullOrWhiteSpace(replay.TypeOfSurvival))
                     continue;
 
@@ -341,7 +407,6 @@ namespace thrucommunity.Controllers
                 {
                     case "1CC":
                         l1cc++;
-                        survivalPoints += 1;
                         break;
 
                     case "NM":
@@ -351,12 +416,10 @@ namespace thrucommunity.Controllers
                     case "NB":
                     case var _ when type.StartsWith("NB("):
                         lnb++;
-                        survivalPoints += 5;
                         break;
 
                     case "NN":
                         lnn++;
-                        survivalPoints += 50;
                         break;
 
                     default:
@@ -365,13 +428,11 @@ namespace thrucommunity.Controllers
                         if (type.StartsWith("NB"))
                         {
                             lnbNx++;
-                            survivalPoints += 5;
                         }
                         //LNN+
                         else if (type.StartsWith("NN"))
                         {
                             lnnn++;
-                            survivalPoints += 50;
                         }
 
                         break;
@@ -394,7 +455,7 @@ namespace thrucommunity.Controllers
                 if (type.StartsWith("NN"))
                 {
                     exnn++;
-                    survivalPoints += 2;
+                    //survivalPoints += 2;
                 }
             }
 

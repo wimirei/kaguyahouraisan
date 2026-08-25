@@ -8,6 +8,10 @@ builder.Services.AddDistributedMemoryCache();
 builder.Services.AddDbContext<ApplicationDbContext>(options =>
 options.UseNpgsql(builder.Configuration.GetConnectionString("DefaultConnection")));
 builder.Services.AddScoped<PlayerService>();
+builder.Services.AddHttpClient<ReplayParserService>(client =>
+{
+    client.Timeout = TimeSpan.FromSeconds(30);
+});
 builder.Services.AddControllersWithViews().AddRazorRuntimeCompilation();
 builder.Services.AddSession(options =>
 {

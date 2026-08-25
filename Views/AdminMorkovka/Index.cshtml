@@ -25,9 +25,11 @@
 
     <div class="card-body">
 
-        <form method="post" asp-action="ResyncAllReplays">
-            <button class="btn btn-warning">
-                Синхронизация всех реплеев
+        <form asp-controller="AdminMorkovka"
+              asp-action="RatingTable"
+              method="post">
+            <button type="submit" class="btn btn-primary">
+                Таблица рейтинга клиров.
             </button>
         </form>
 

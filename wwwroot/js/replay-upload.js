@@ -199,21 +199,4 @@ document.addEventListener("DOMContentLoaded", () => {
     updateThirdConditionLabel();
 });
 
-const replayFile = document.getElementById("ReplayFile");
-
 const replayDate = document.getElementById("ReplayDate");
-
-replayFile.addEventListener(
-    "change",
-    function () {
-        if (this.files.length === 0)
-            return;
-
-        const file = this.files[0];
-
-        const date = new Date(file.lastModified);
-
-        date.setMinutes(date.getMinutes() - date.getTimezoneOffset());
-
-        replayDate.value = date.toISOString().slice(0, 19);
-    });
