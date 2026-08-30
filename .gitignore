@@ -364,6 +364,8 @@ FodyWeavers.xsd
 
 appsettings.Production.json
 
+appsettings.Development.json
+
 wwwroot/Replays/
 
 wwwroot/robots.txt

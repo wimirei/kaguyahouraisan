@@ -54,7 +54,7 @@
                     <td>@Html.DisplayFor(modelItem => item.Game)</td>
                     <td>@Html.DisplayFor(modelItem => item.ShotType)</td>
                     <td>
-                        @if (item.Category == RunCategory.Scoring || item.Score != 0)
+                        @if (item.Category == RunCategory.Scoring)
                         {
                             <a asp-action="Replay" asp-route-id="@item.Id">
                                     @item.Score?.ToString("N0")
