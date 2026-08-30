@@ -1,0 +1,46 @@
+name: Deploy to VPS
+
+on:
+  push:
+    branches:
+      - master
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup .NET
+        uses: actions/setup-dotnet@v4
+        with:
+          dotnet-version: '9.0'  
+
+      - name: Publish application
+        run: |
+          dotnet publish \
+            -c Release \
+            -r linux-x64 \
+            --self-contained false \
+            -o ./publish
+
+      - name: Deploy to VPS
+        uses: appleboy/scp-action@v1
+        with:
+          host: ${{ secrets.VPS_HOST }}
+          username: wimirei
+          key: ${{ secrets.VPS_SSH_KEY }}
+          source: "./publish/*"
+          target: "/var/www/kaguyahouraisan"
+
+      - name: Restart application
+        uses: appleboy/ssh-action@v1
+        with:
+          host: ${{ secrets.VPS_HOST }}
+          username: wimirei
+          key: ${{ secrets.VPS_SSH_KEY }}
+          script: |
+            sudo systemctl restart kaguyahouraisan.service
+            sudo systemctl is-active kaguyahouraisan.service
