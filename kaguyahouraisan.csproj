@@ -18,7 +18,7 @@
 
   <ItemGroup>
     <Folder Include="wwwroot\images\games\" />
-	<Content Include="wwwroot\resources\**\*" CopyToPublishDirectory="PreserveNewest" />
+	<Content Update="wwwroot\resources\**\*" CopyToPublishDirectory="PreserveNewest" />
     <Content Update="wwwroot\Replays\**\*" CopyToOutputDirectory="Never" CopyToPublishDirectory="Never" />
     <Content Update="appsettings.Production.json">
       <CopyToPublishDirectory>Never</CopyToPublishDirectory>
