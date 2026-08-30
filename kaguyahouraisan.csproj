@@ -18,6 +18,9 @@
 
   <ItemGroup>
     <Folder Include="wwwroot\images\games\" />
+	  <Content Update="wwwroot\Replays\**\*"
+             CopyToOutputDirectory="Never"
+             CopyToPublishDirectory="Never" />
   </ItemGroup>
 
 </Project>
