@@ -56,15 +56,11 @@
                     <td>
                         @if (item.Category == RunCategory.Scoring)
                         {
-                            <a asp-action="Replay" asp-route-id="@item.Id">
-                                    @item.Score?.ToString("N0")
-                            </a>
+                            <a asp-action="Replay" asp-route-id="@item.Id">@item.Score?.ToString("N0")</a>
                         }
                         else
                         {
-                            <a asp-action="Replay" asp-route-id="@item.Id">
-                                @item.TypeOfSurvival
-                            </a>
+                            <a asp-action="Replay" asp-route-id="@item.Id">@item.TypeOfSurvival</a>
                         }
                     </td>
                         <td>
