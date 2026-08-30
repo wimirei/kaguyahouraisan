@@ -35,6 +35,7 @@ jobs:
           port: ${{ secrets.VPS_PORT }}
           source: "./publish/*"
           target: "/var/www/kaguyahouraisan"
+          strip_components: 1
 
       - name: Restart application
         uses: appleboy/ssh-action@v1
