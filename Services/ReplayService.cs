@@ -239,6 +239,7 @@ namespace thrucommunity.Services
                 TouhouGame.UM => "badge-UM",
                 TouhouGame.UDoALG => "badge-UDoALG",
                 TouhouGame.FW => "badge-FW",
+                TouhouGame.EoSDNC => "badge-EoSD",
                 _ => ""
             };
         }
@@ -268,6 +269,7 @@ namespace thrucommunity.Services
                 TouhouGame.UM => "東方虹龍洞 - Unconnected Marketeers",
                 TouhouGame.UDoALG => "東方獣王園 - Unfinished Dream of All Living Ghost",
                 TouhouGame.FW => "東方錦上京 - Fossilized Wonders",
+                TouhouGame.EoSDNC => "東方紅魔郷: New Classic - Embodiment of Scarlet Devil",
                 _ => ""
             };
 
@@ -298,6 +300,7 @@ namespace thrucommunity.Services
                 TouhouGame.UM => "Touhou 18",
                 TouhouGame.UDoALG => "Touhou 19",
                 TouhouGame.FW => "Touhou 20",
+                TouhouGame.EoSDNC => "Touhou 6 New Classic",
                 _ => ""
             };
 

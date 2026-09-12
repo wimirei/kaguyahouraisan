@@ -87,7 +87,8 @@ namespace thrucommunity.Models
         WBaWC,
         UM,
         UDoALG,
-        FW
+        FW,
+        EoSDNC
     }
 
     public enum Difficulty

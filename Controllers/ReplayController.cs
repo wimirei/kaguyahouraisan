@@ -153,7 +153,7 @@ namespace thrucommunity.Controllers
                     return BadRequest(new
                     {
                         success = false,
-                        message = "Не удалось распарсить реплей."
+                        message = "Не удалось прочитать файл реплея. Если вы загрузили реплей с EoSD New Classic, игнорируйте эту ошибку."
                     });
                 }
 
@@ -297,10 +297,15 @@ namespace thrucommunity.Controllers
 
             if (model.Difficulty == Difficulty.Extra) { model.INFinal = null; }
 
-            if(model.ReplayFile != null)
+            if(model.ReplayFile != null && model.Game != TouhouGame.EoSDNC)
             {
                 model.ReplayDate = DateTime.SpecifyKind(model.ReplayDate.Value, DateTimeKind.Utc);
-            }            
+            }
+            
+            if(model.Game == TouhouGame.EoSDNC)
+            {
+                model.ReplayDate = DateTime.SpecifyKind(model.ReplayDate.GetValueOrDefault(), DateTimeKind.Utc);
+            }
 
             model.Proven = false;
 

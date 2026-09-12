@@ -256,6 +256,14 @@ namespace thrucommunity.Data
                     "MarisaY2",
                     "MarisaG1",
                     "MarisaG2"
+                },
+
+                [TouhouGame.EoSDNC] = new()
+                {
+                    "Reimu A",
+                    "Reimu B",
+                    "Marisa A",
+                    "Marisa B"
                 }
             };
         public static readonly Dictionary<TouhouGame, List<Difficulty>> Difficulties =
@@ -501,6 +509,18 @@ namespace thrucommunity.Data
 
                 {
                     TouhouGame.FW,
+                    new()
+                    {
+                        Difficulty.Easy,
+                        Difficulty.Normal,
+                        Difficulty.Hard,
+                        Difficulty.Lunatic,
+                        Difficulty.Extra
+                    }
+                },
+
+                {
+                    TouhouGame.EoSDNC,
                     new()
                     {
                         Difficulty.Easy,
