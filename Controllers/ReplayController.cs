@@ -1,5 +1,8 @@
 ﻿using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.RateLimiting;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
+using System.Text.RegularExpressions;
 using thrucommunity.Data;
 using thrucommunity.Models;
 using thrucommunity.Services;
@@ -106,6 +109,8 @@ namespace thrucommunity.Controllers
         }
 
         [HttpPost("Replay/Parse")]
+        [ValidateAntiForgeryToken]
+        [EnableRateLimiting("replay-parse")]
         public async Task<IActionResult> ParseReplay(IFormFile file)
         {
             if (file == null || file.Length == 0)
@@ -189,6 +194,7 @@ namespace thrucommunity.Controllers
 
         [HttpPost("Replay/Upload")]
         [ValidateAntiForgeryToken]
+        [EnableRateLimiting("replay-upload")]
         public async Task<IActionResult> Create(ReplayModel model)
         {
 
@@ -504,5 +510,15 @@ namespace thrucommunity.Controllers
             //Easy, Mormal, Hard, Lunatic
             return type.Substring(1);
         }
+
+        //Пускай пока останется, если метод в модели реплея не сработает, тогда добавлю проверку тут
+        /*
+        private static bool IsValidNickname(string nickname)
+        {
+            return !string.IsNullOrWhiteSpace(nickname)
+                && nickname.Length <= 32
+                && Regex.IsMatch(nickname, @"^[a-zA-Z0-9_а-яА-ЯёЁ]+$");
+        }
+        */
     }
 }

@@ -9,6 +9,8 @@ namespace thrucommunity.Models
         public int Id { get; set; }
 
         [Required(ErrorMessage = "Это обязательно поле")]
+        [RegularExpression(@"^[a-zA-Z0-9_а-яА-ЯёЁ]+$",
+            ErrorMessage = "Никнейм может содержать только латинские буквы, цифры, '_' и '-'. Максимум 32 символа.")]
         public string Nickname { get; set; } = "";
 
         public string? Comment { get; set; } = "";

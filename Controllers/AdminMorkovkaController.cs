@@ -39,6 +39,7 @@ namespace thrucommunity.Controllers
         }
 
         [HttpPost]
+        [ValidateAntiForgeryToken]
         public async Task<IActionResult> Login(string password)
         {
             string? passwordHash =
@@ -67,7 +68,7 @@ namespace thrucommunity.Controllers
                 var identity =
                     new ClaimsIdentity(
                         claims,
-                        CookieAuthenticationDefaults.AuthenticationScheme);
+                        "AdminCookie");
 
                 var principal =
                     new ClaimsPrincipal(identity);
@@ -530,6 +531,7 @@ namespace thrucommunity.Controllers
             return type.Substring(1);
         }
 
+        [Authorize(Roles = "Admin")]
         [HttpGet("AdminMorkovka/Players")]
         public async Task<IActionResult> Players()
         {
@@ -540,6 +542,7 @@ namespace thrucommunity.Controllers
             return View(players);
         }
 
+        [Authorize(Roles = "Admin")]
         [HttpGet("AdminMorkovka/EditPlayer/{id}")]
         public async Task<IActionResult> EditPlayer(int id)
         {
@@ -591,6 +594,7 @@ namespace thrucommunity.Controllers
             return RedirectToAction(nameof(Players));
         }
 
+        [Authorize(Roles = "Admin")]
         [HttpPost("AdminMorkovka/DeletePlayer/{id}")]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> DeletePlayer(int id)
@@ -608,6 +612,7 @@ namespace thrucommunity.Controllers
             return RedirectToAction(nameof(Players));
         }
 
+        [Authorize(Roles = "Admin")]
         [HttpPost("AdminMorkovka/RatingTable")]
         public IActionResult RatingTable()
         {
