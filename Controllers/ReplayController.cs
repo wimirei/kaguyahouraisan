@@ -109,7 +109,7 @@ namespace thrucommunity.Controllers
         }
 
         [HttpPost("Replay/Parse")]
-        [ValidateAntiForgeryToken]
+        [IgnoreAntiforgeryToken]
         [EnableRateLimiting("replay-parse")]
         public async Task<IActionResult> ParseReplay(IFormFile file)
         {
@@ -193,7 +193,7 @@ namespace thrucommunity.Controllers
         }
 
         [HttpPost("Replay/Upload")]
-        [ValidateAntiForgeryToken]
+        [IgnoreAntiforgeryToken]
         [EnableRateLimiting("replay-upload")]
         public async Task<IActionResult> Create(ReplayModel model)
         {
